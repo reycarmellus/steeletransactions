@@ -25,7 +25,8 @@
 </head>
 <body>
   <h1>Steele Transactions Request Form</h1>
-  <form id="intakeForm" data-survey-id="SRV001" novalidate>
+  <form id="intakeForm" data-survey-id="SRV001" novalidate autocomplete="off" autocapitalize="off" spellcheck="false">
+
     
     <section class="form-section" id="SRV001_S001" data-section="S001" data-survey-id="SRV001" style="display:block">
       <h2>Request Type</h2>
@@ -746,6 +747,30 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('intakeForm');
+  if (!form) return;
+
+  // Force all fields to ignore stored suggestions
+  form.querySelectorAll('input, select, textarea').forEach(el => {
+    el.setAttribute('autocomplete', 'off');
+    el.setAttribute('autocapitalize', 'off');
+    el.setAttribute('spellcheck', 'false');
+  });
+
+  // If the page was restored from backforward cache, clear any old values
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) {
+      form.reset();
+      if (typeof applyVisibility === 'function') applyVisibility();
+      window.scrollTo(0, 0);
+    }
+  });
+});
+</script>
+
+
+<script>
 const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKfk1ifQskrjP-QaSzdBkbF9PsqCc9bgyN-jNATDIeVL9QkkCghwGyzwNmspgwWQXgeg/exec';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -825,12 +850,40 @@ document.addEventListener('DOMContentLoaded', function () {
       let json;
       try { json = JSON.parse(text); } catch { json = { success:false, message:text }; }
 
-      if (json.success || json.ok) {
-        const ref = json.respondentId || '';
-        const link = json.filesUrl || '';
-        status.innerHTML = 'Submitted. ' + (ref ? 'Reference ID: ' + ref + ' ' : '') + (link ? '<a href="' + link + '" target="_blank">View upload</a>' : '');
-        form.reset();
-      } else {
+if (json.success || json.ok) {
+  // Hide any status text beside the button
+  status.textContent = '';
+  status.style.display = 'none';
+
+  // Friendly confirmation
+  alert('Thank you. We will reach out to you within 48 hours. We appreciate your business.');
+
+  // Full reset
+  form.reset();
+
+  // Remove any extra dynamic entries that may have been added
+  const buyersInfo = document.getElementById('buyersInfo');
+  if (buyersInfo) {
+    const buyerRows = buyersInfo.querySelectorAll('.buyer-entry');
+    buyerRows.forEach((row, idx) => { if (idx > 0) row.remove(); });
+  }
+  const sellersInfo = document.getElementById('sellersInfo');
+  if (sellersInfo) {
+    const sellerRows = sellersInfo.querySelectorAll('.seller-entry');
+    sellerRows.forEach((row, idx) => { if (idx > 0) row.remove(); });
+  }
+
+  // Recompute visibility so only the first section shows
+  if (typeof applyVisibility === 'function') applyVisibility();
+
+  // Back to the very top and focus the first field
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const firstField = document.getElementById('serviceSelection') || form.querySelector('input,select,textarea');
+  if (firstField) firstField.focus({ preventScroll: true });
+
+  return; // done
+}
+ else {
         status.textContent = 'Error: ' + (json.message || json.error || 'Unknown error');
       }
     } catch (err) {
