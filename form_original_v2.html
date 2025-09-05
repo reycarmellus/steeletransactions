@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Steele Transactions Request Form</title>
 <style>
+
   body { font-family: system-ui, Arial, sans-serif; padding: 20px; }
   h1 { margin-top: 0; }
   .form-section { border: 1px solid #ddd; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
@@ -21,6 +22,17 @@
   .submit-bar { position: sticky; bottom: 0; background: #fff; padding: 12px 0; border-top: 1px solid #eee; }
   .hidden { display: none !important; }
   .note { color: #666; font-size: 0.9rem; }
+
+
+  /* Custom modal */
+  .rt-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; z-index: 9999; }
+  .rt-modal { width: min(520px, 92%); background: #fff; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); overflow: hidden; }
+  .rt-modal header { padding: 14px 16px; border-bottom: 1px solid #eee; font-weight: 600; font-size: 1.05rem; }
+  .rt-modal .rt-body { padding: 16px; font-size: 0.98rem; color: #222; }
+  .rt-modal footer { padding: 12px 16px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 8px; }
+  .rt-btn { padding: 8px 12px; border: 1px solid #999; background: #f5f5f5; border-radius: 6px; cursor: pointer; }
+  .rt-btn:focus { outline: 2px solid #4c9ffe; outline-offset: 2px; }
+
 </style>
 </head>
 <body>
@@ -856,8 +868,7 @@ if (json.success || json.ok) {
   status.style.display = 'none';
 
   // Friendly confirmation
-  document.title = "Form Submitted";
-  alert('Thank you. We will reach out to you within 48 hours. We appreciate your business.');
+  showRequestModal('Request Submitted', 'Thank you. We will reach out to you within 48 hours. We appreciate your business.');
 
   // Full reset
   form.reset();
@@ -892,6 +903,154 @@ if (json.success || json.ok) {
     }
   });
 });
+</script>
+
+
+<!-- Request Submitted Modal -->
+<div class="rt-modal-overlay" id="rtModalOverlay" role="dialog" aria-modal="true" aria-labelledby="rtModalTitle" aria-describedby="rtModalDesc">
+  <div class="rt-modal">
+    <header id="rtModalTitle">Request Submitted</header>
+    <div class="rt-body" id="rtModalDesc">Thank you. We will reach out to you within 48 hours. We appreciate your business.</div>
+    <footer>
+      <button type="button" class="rt-btn" id="rtModalOk">OK</button>
+    </footer>
+  </div>
+</div>
+
+
+<script>
+// ===== Repeater helpers for Buyers and Sellers =====
+(function() {
+  function createInput(labelText, baseName, type, idSuffix) {
+    const wrap = document.createElement('div');
+    wrap.className = 'field-wrap';
+    const label = document.createElement('label');
+    const id = baseName + idSuffix;
+    label.setAttribute('for', id);
+    label.textContent = labelText;
+    const input = document.createElement('input');
+    input.type = type || 'text';
+    input.id = id;
+    input.name = baseName.endsWith('[]') ? baseName : baseName + '[]';
+    input.required = true;
+    wrap.appendChild(label);
+    wrap.appendChild(input);
+    return wrap;
+  }
+
+  function addBuyer() {
+    const fieldset = document.getElementById('buyersInfo');
+    if (!fieldset) return;
+    const count = fieldset.querySelectorAll('.buyer-entry').length + 1;
+    const entry = document.createElement('div');
+    entry.className = 'buyer-entry repeater-item';
+
+    entry.appendChild(createInput('Name:', 'buyerName', 'text', String(count)));
+    entry.appendChild(createInput('Email Address:', 'buyerEmail', 'email', String(count)));
+    entry.appendChild(createInput('Phone Number:', 'buyerPhone', 'tel', String(count)));
+
+    const btnRow = document.createElement('div');
+    btnRow.style.marginTop = '8px';
+
+    const addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.className = 'btn';
+    addBtn.textContent = '+ Add';
+    addBtn.addEventListener('click', addBuyer);
+
+    const remBtn = document.createElement('button');
+    remBtn.type = 'button';
+    remBtn.className = 'btn remove';
+    remBtn.textContent = 'Remove';
+    remBtn.addEventListener('click', function() {
+      removeEntry(entry, 'buyersInfo', '.buyer-entry');
+    });
+
+    btnRow.appendChild(addBtn);
+    btnRow.appendChild(remBtn);
+    entry.appendChild(btnRow);
+
+    fieldset.appendChild(entry);
+  }
+  window.addBuyer = addBuyer;
+
+  function addSeller() {
+    const fieldset = document.getElementById('sellersInfo');
+    if (!fieldset) return;
+    const count = fieldset.querySelectorAll('.seller-entry').length + 1;
+    const entry = document.createElement('div');
+    entry.className = 'seller-entry repeater-item';
+
+    entry.appendChild(createInput('Legal Name:', 'sellerName', 'text', String(count)));
+    entry.appendChild(createInput('Email Address:', 'sellerEmail', 'email', String(count)));
+    entry.appendChild(createInput('Phone Number:', 'sellerPhone', 'tel', String(count)));
+
+    const btnRow = document.createElement('div');
+    btnRow.style.marginTop = '8px';
+
+    const addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.className = 'btn';
+    addBtn.textContent = '+ Add';
+    addBtn.addEventListener('click', addSeller);
+
+    const remBtn = document.createElement('button');
+    remBtn.type = 'button';
+    remBtn.className = 'btn remove';
+    remBtn.textContent = 'Remove';
+    remBtn.addEventListener('click', function() {
+      removeEntry(entry, 'sellersInfo', '.seller-entry');
+    });
+
+    btnRow.appendChild(addBtn);
+    btnRow.appendChild(remBtn);
+    entry.appendChild(btnRow);
+
+    fieldset.appendChild(entry);
+  }
+  window.addSeller = addSeller;
+
+  function removeEntry(entryEl, parentId, selector) {
+    const parent = document.getElementById(parentId);
+    if (!parent) return;
+    const items = parent.querySelectorAll(selector);
+    if (items.length <= 1) {
+      // Keep at least one item visible
+      const inputs = items[0].querySelectorAll('input');
+      inputs.forEach(i => i.value = '');
+      return;
+    }
+    entryEl.remove();
+  }
+  window.removeEntry = removeEntry;
+})();
+
+// ===== Simple modal to avoid browser alert title showing the origin =====
+(function() {
+  const overlay = document.getElementById('rtModalOverlay');
+  const okBtn = document.getElementById('rtModalOk');
+  function showRequestModal(title, message) {
+    const titleEl = document.getElementById('rtModalTitle');
+    const bodyEl  = document.getElementById('rtModalDesc');
+    if (titleEl) titleEl.textContent = title || 'Request Submitted';
+    if (bodyEl)  bodyEl.textContent  = message || '';
+    if (overlay) overlay.style.display = 'flex';
+    // trap focus
+    if (okBtn) okBtn.focus();
+  }
+  function hideModal() {
+    if (overlay) overlay.style.display = 'none';
+  }
+  if (okBtn) okBtn.addEventListener('click', hideModal);
+  if (overlay) overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) hideModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') hideModal();
+  });
+  // expose
+  window.showRequestModal = showRequestModal;
+})();
 </script>
 
 </body>
