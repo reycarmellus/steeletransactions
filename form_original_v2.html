@@ -1,0 +1,844 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Steele Transactions Request Form</title>
+<style>
+  body { font-family: system-ui, Arial, sans-serif; padding: 20px; }
+  h1 { margin-top: 0; }
+  .form-section { border: 1px solid #ddd; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+  .section-desc { color: #555; font-size: 0.95rem; margin-top: -8px; }
+  fieldset { border: 1px solid #ccc; padding: 12px; border-radius: 6px; margin-bottom: 12px; }
+  legend { font-weight: 600; }
+  label { display: block; margin-top: 8px; }
+  input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="date"], select, textarea {
+    width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ccc; border-radius: 4px;
+  }
+  .repeater-item { border: 1px dashed #aaa; padding: 12px; border-radius: 6px; margin: 8px 0; }
+  .btn { padding: 8px 12px; border: 1px solid #999; background: #f5f5f5; border-radius: 4px; cursor: pointer; }
+  .btn.remove { margin-left: 8px; }
+  .submit-bar { position: sticky; bottom: 0; background: #fff; padding: 12px 0; border-top: 1px solid #eee; }
+  .hidden { display: none !important; }
+  .note { color: #666; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+  <h1>Steele Transactions Request Form</h1>
+  <form id="intakeForm" data-survey-id="SRV001" novalidate>
+    
+    <section class="form-section" id="SRV001_S001" data-section="S001" data-survey-id="SRV001" style="display:block">
+      <h2>Request Type</h2>
+      <p class="section-desc">Type of Service Request & Requestor Info</p>
+      <div class="question" data-qid="Q001"><label for="serviceSelection">Please select service:</label>
+<select id="serviceSelection" name="serviceSelection" required="">
+<option value="">--Select--</option>
+<option value="Offer Writing">Offer Writing</option>
+<option value="Listing Preparation">Listing Preparation</option>
+<option value="MLS Input Only">MLS Input Only</option>
+</select></div>
+<div class="question" data-qid="Q002"><label for="requestorName">Requestor Name:</label>
+<input id="requestorName" name="requestorName" required="" type="text"/>
+</div>
+<div class="question" data-qid="Q003"><label for="requestorEmail">Requestor Email Address:</label>
+<input id="requestorEmail" name="requestorEmail" placeholder="e.g. name@example.com" required="" type="email"/>
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S002" data-section="S002" data-survey-id="SRV001" style="display:none">
+      <h2>Offer Writing - Buyer's Rep</h2>
+      <p class="section-desc">Buyer's Rep</p>
+      <div class="question" data-qid="Q004"><fieldset>
+<legend>Do you need me to prepare a Buyers Rep?</legend>
+<label><input name="buyersRep" required="" type="radio" value="Yes"/> Yes</label><br/>
+<label><input name="buyersRep" type="radio" value="No"/> No</label>
+</fieldset></div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S003" data-section="S003" data-survey-id="SRV001" style="display:none">
+      <h2>Offer Writing - Buyer's Rep Details</h2>
+      <p class="section-desc">Buyer's Rep Details</p>
+      <div class="question" data-qid="Q005"><fieldset id="buyersInfo">
+<legend>Buyer(s) Information</legend>
+<div class="buyer-entry">
+<label for="buyerName1">Name:</label>
+<input id="buyerName1" name="buyerName[]" required="" type="text"/>
+<label for="buyerEmail1">Email Address:</label>
+<input id="buyerEmail1" name="buyerEmail[]" required="" type="email"/>
+<label for="buyerPhone1">Phone Number:</label>
+<input id="buyerPhone1" name="buyerPhone[]" required="" type="tel"/>
+</div>
+<button onclick="addBuyer()" type="button">+ Add Another Buyer</button>
+</fieldset>
+
+</div>
+<div class="question" data-qid="Q006"><fieldset>
+<legend>What is the Start and End Date of your Buyers Rep?</legend>
+<label for="buyersRepStart">Start Date:</label>
+<input id="buyersRepStart" name="buyersRepStart" type="date"/>
+<label for="buyersRepEnd">End Date:</label>
+<input id="buyersRepEnd" name="buyersRepEnd" type="date"/>
+</fieldset>
+</div>
+<div class="question" data-qid="Q007"><label for="buyersAgentCommission">What is your BAC? (Buyer's Agent Commission):</label>
+<input id="buyersAgentCommission" min="0" name="buyersAgentCommission" placeholder="e.g. 3.00" step="0.01" title="Enter commission as a percentage or flat amount" type="number"/>
+</div>
+<div class="question" data-qid="Q008"><!-- Section: Additional Notes -->
+<fieldset>
+<legend>Additional Notes</legend>
+<label for="remarks">Any other notes or remarks?</label><br/>
+<textarea cols="50" name="remarks" placeholder="Type your comments here..." rows="4"></textarea><br/><br/>
+</fieldset>
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S004" data-section="S004" data-survey-id="SRV001" style="display:none">
+      <h2>Offer Writing - Property Address and Financing</h2>
+      <p class="section-desc">Property Address and Financing</p>
+      <div class="question" data-qid="Q009"><fieldset>
+<legend>What is the Property Address?</legend>
+<label for="streetAddress">Street Address:</label>
+<input id="streetAddress" name="streetAddress" required="" type="text"/>
+<label for="city">City:</label>
+<input id="city" name="city" required="" type="text"/>
+<label for="state">State:</label>
+<input id="state" name="state" readonly="" type="text" value="TX"/>
+<label for="zipCode">Zip Code:</label>
+<input id="zipCode" name="zipCode" pattern="\d{5}" required="" title="Enter a 5-digit ZIP code" type="text"/>
+</fieldset>
+</div>
+<div class="question" data-qid="Q010"><label for="financingType">What type of Financing?</label>
+<select id="financingType" name="financingType" onchange="toggleOtherFinancing()">
+<option value="">--Select--</option>
+<option value="Cash">Cash</option>
+<option value="FHA">FHA</option>
+<option value="Conventional">Conventional</option>
+<option value="VA">VA</option>
+<option value="USDA">USDA</option>
+<option value="Other">Other</option>
+</select>
+<div id="otherFinancingContainer" style="display:none; margin-top:8px;">
+<label for="otherFinancing">Please specify:</label>
+<input id="otherFinancing" name="otherFinancing" type="text"/>
+</div>
+
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S005" data-section="S005" data-survey-id="SRV001" style="display:none">
+      <h2>Offer Writing - Third Party Financing</h2>
+      <p class="section-desc">Third Party Financing</p>
+      <div class="question" data-qid="Q011"><fieldset>
+<legend>What is the Down Payment &amp; Total Sales Price?</legend>
+<label for="downPayment">Down Payment:</label>
+<input id="downPayment" min="0" name="downPayment" placeholder="e.g. 20000" step="0.01" type="number"/>
+<label for="salesPrice">Total Sales Price:</label>
+<input id="salesPrice" min="0" name="salesPrice" placeholder="e.g. 250000" step="0.01" type="number"/>
+</fieldset>
+</div>
+<div class="question" data-qid="Q012"><fieldset>
+<legend>Interest not to exceed:</legend>
+<label><input name="interestCap" required="" type="radio" value="1%"/> 1%</label><br/>
+<label><input name="interestCap" type="radio" value="2%"/> 2%</label><br/>
+<label><input name="interestCap" type="radio" value="N/A"/> N/A</label>
+</fieldset>
+</div>
+<div class="question" data-qid="Q013"><fieldset>
+<legend>Due in how many years?</legend>
+<label><input name="loanTerm" onclick="toggleOtherTerm()" type="radio" value="15 years"/> 15 years</label><br/>
+<label><input name="loanTerm" onclick="toggleOtherTerm()" type="radio" value="30 years"/> 30 years</label><br/>
+<label><input name="loanTerm" onclick="toggleOtherTerm()" type="radio" value="Other"/> Other</label>
+<div id="otherTermContainer" style="display:none; margin-top:8px;">
+<label for="otherTerm">Please specify number of years:</label>
+<input id="otherTerm" min="1" name="otherTerm" placeholder="e.g. 20" type="number"/>
+</div>
+</fieldset>
+
+</div>
+<div class="question" data-qid="Q014"><fieldset>
+<legend>How many days for Buyer to obtain Financing Approval?</legend>
+<label><input name="financingApprovalDays" onclick="toggleFinancingOther()" type="radio" value="21"/> 21 days</label><br/>
+<label><input name="financingApprovalDays" onclick="toggleFinancingOther()" type="radio" value="30"/> 30 days</label><br/>
+<label><input name="financingApprovalDays" onclick="toggleFinancingOther()" type="radio" value="Other"/> Other</label>
+<div id="financingOtherContainer" style="display:none; margin-top:8px;">
+<label for="financingOther">Please specify number of days:</label>
+<input id="financingOther" min="1" name="financingOther" placeholder="e.g. 45" type="number"/>
+</div>
+</fieldset>
+
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S006" data-section="S006" data-survey-id="SRV001" style="display:none">
+      <h2>Offer Writing - Offer Information</h2>
+      <p class="section-desc">Offer Information</p>
+      <div class="question" data-qid="Q015"><label for="salesPrice">What is the Sales Price?</label>
+<input id="salesPrice" min="0" name="salesPrice" placeholder="e.g. 250000" step="0.01" type="number"/>
+</div>
+<div class="question" data-qid="Q016"><label for="titleCompany">Title Company Preference:</label>
+<input id="titleCompany" name="titleCompany" placeholder="e.g. ABC Title Services" type="text"/>
+</div>
+<div class="question" data-qid="Q017"><fieldset>
+<legend>Financial Terms</legend>
+<label for="earnestMoney">Earnest Money:</label>
+<input id="earnestMoney" name="earnestMoney" required="" type="number"/><br/>
+<label for="optionMoney">Option Money:</label>
+<input id="optionMoney" name="optionMoney" required="" type="number"/><br/>
+<label for="optionDays">Number of Option Days:</label>
+<input id="optionDays" name="optionDays" required="" type="number"/>
+</fieldset>
+</div>
+<div class="question" data-qid="Q018"><fieldset>
+<legend>Who pays the Title Policy?</legend>
+<label><input name="titlePolicyPayer" required="" type="radio" value="Buyer"/> Buyer</label><br/>
+<label><input name="titlePolicyPayer" type="radio" value="Seller"/> Seller</label>
+</fieldset>
+</div>
+<div class="question" data-qid="Q019"><fieldset>
+<legend>If no Survey is provided, who pays for a new one?</legend>
+<label><input name="surveyResponsibility" required="" type="radio" value="Buyer"/> Buyer</label><br/>
+<label><input name="surveyResponsibility" type="radio" value="Seller"/> Seller</label><br/>
+<label><input name="surveyResponsibility" type="radio" value="BuyersExpense"/> Amend Survey Shortages @ Buyers Expense</label><br/>
+<label><input name="surveyResponsibility" type="radio" value="SellersExpense"/> Amend Survey Shortages @ Sellers Expense</label><br/>
+<label><input name="surveyResponsibility" type="radio" value="NoAmend"/> No Amend Survey Shortages</label>
+</fieldset>
+</div>
+<div class="question" data-qid="Q020"><label for="titlePolicyObjections">Does Buyer have Objections to the Title Policy?</label>
+<textarea id="titlePolicyObjections" name="titlePolicyObjections" placeholder="Enter any objections or concerns here..." rows="4"></textarea>
+</div>
+<div class="question" data-qid="Q021"><label for="hoaStatus">Is the property in a Mandatory HOA?</label>
+<select id="hoaStatus" name="hoaStatus" required="">
+<option value="">--Select--</option>
+<option value="Yes">Yes</option>
+<option value="No">No</option>
+<option value="Voluntary">Voluntary</option>
+</select>
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S007" data-section="S007" data-survey-id="SRV001" style="display:none">
+      <h2>Offer Writing - HOA Details</h2>
+      <p class="section-desc">HOA Details</p>
+      <div class="question" data-qid="Q022"><label for="hoaInfoDays">Within how many days do you want the HOA info supplied?</label>
+<input id="hoaInfoDays" min="1" name="hoaInfoDays" placeholder="e.g. 5" type="number"/>
+</div>
+<div class="question" data-qid="Q023"><label for="buyerFees">How much does Buyer need to pay up towards fees?</label>
+<input id="buyerFees" min="0" name="buyerFees" placeholder="e.g. 1500" step="0.01" type="number"/>
+</div>
+<div class="question" data-qid="Q024"><fieldset>
+<legend>Who pays for obtaining information?</legend>
+<label><input name="infoPayer" required="" type="radio" value="Buyer"/> Buyer</label><br/>
+<label><input name="infoPayer" type="radio" value="Seller"/> Seller</label>
+</fieldset></div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S008" data-section="S008" data-survey-id="SRV001" style="display:none">
+      <h2>Offer Writing - Offer Information</h2>
+      <p class="section-desc">Offer Information</p>
+      <div class="question" data-qid="Q025"><label for="buyerCondition">Buyer accepts property "AS IS" or is it subject to repairs?</label>
+<textarea id="buyerCondition" name="buyerCondition" required="" rows="4"></textarea>
+</div>
+<div class="question" data-qid="Q026"><label for="homeWarrantyAmount">Home Warranty Amount:</label>
+<input id="homeWarrantyAmount" min="0" name="homeWarrantyAmount" placeholder="e.g. 500" step="0.01" type="number"/>
+</div>
+<div class="question" data-qid="Q027"><label for="closingDate">Closing Date:</label>
+<input id="closingDate" name="closingDate" required="" type="date"/></div>
+<div class="question" data-qid="Q028"><fieldset>
+<legend>Is there a Leaseback?</legend>
+<label><input name="leaseback" onclick="toggleLeasebackDetails()" type="radio" value="Yes"/> Yes</label><br/>
+<label><input name="leaseback" onclick="toggleLeasebackDetails()" type="radio" value="No"/> No</label>
+<div id="leasebackDetailsContainer" style="display:none; margin-top:8px;">
+<label for="leasebackDetails">If yes, provide details below:</label>
+<textarea id="leasebackDetails" name="leasebackDetails" placeholder="e.g. Seller to lease back for 30 days post-closing at $X/day" rows="4"></textarea>
+</div>
+</fieldset>
+
+</div>
+<div class="question" data-qid="Q029"><label for="sellerConcessions">Any Seller Concessions?</label>
+<textarea id="sellerConcessions" name="sellerConcessions" placeholder="e.g. Seller to contribute $5,000 toward closing costs or repairs..." rows="4"></textarea>
+</div>
+<div class="question" data-qid="Q030"><fieldset>
+<legend>Are you requesting the Seller to pay BAC?</legend>
+<label><input name="sellerPaysBAC" required="" type="radio" value="Yes"/> Yes</label><br/>
+<label><input name="sellerPaysBAC" type="radio" value="No"/> No</label>
+</fieldset>
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S009" data-section="S009" data-survey-id="SRV001" style="display:none">
+      <h2>Offer Writing - Commission</h2>
+      <p class="section-desc">Commission</p>
+      <div class="question" data-qid="Q031"><label for="sellerBACAmount">How much are you requesting the Seller to pay BAC?</label>
+<input id="sellerBACAmount" min="0" name="sellerBACAmount" placeholder="e.g. 3000" step="0.01" type="number"/>
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S010" data-section="S010" data-survey-id="SRV001" style="display:none">
+      <h2>Offer Writing - Commission</h2>
+      <p class="section-desc">Commission</p>
+      <div class="question" data-qid="Q032"><label for="listingBrokerBAC">How much are you requesting the Listing Broker to pay towards BAC?</label>
+<input id="listingBrokerBAC" min="0" name="listingBrokerBAC" placeholder="e.g. 1500" step="0.01" type="number"/>
+<small>(Compensation Agreement between Brokers will be included)</small>
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S011" data-section="S011" data-survey-id="SRV001" style="display:none">
+      <h2>Listing Preparation - Listing Information</h2>
+      <p class="section-desc">Listing Preparation</p>
+      <div class="question" data-qid="Q033"><label for="listingAgreementStatus">Have I prepared a Listing Agreement for you before?</label>
+<select id="listingAgreementStatus" name="listingAgreementStatus">
+<option value="">--Select an option--</option>
+<option value="Yes">Yes</option>
+<option value="No">No</option>
+<option value="Yes - but I want to change some information">Yes – but I want to change some information (such as the # of days in Protection Period)</option>
+</select></div>
+<div class="question" data-qid="Q034"><fieldset id="sellersInfo">
+<legend>Please provide your Seller(s) contact information:</legend>
+<p>(If not already in your Zipforms, Docusign, Skyslope…etc)</p>
+<div class="seller-entry">
+<label for="sellerName1">Legal Name:</label>
+<input id="sellerName1" name="sellerName[]" required="" type="text"/>
+<label for="sellerEmail1">Email Address:</label>
+<input id="sellerEmail1" name="sellerEmail[]" required="" type="email"/>
+<label for="sellerPhone1">Phone Number:</label>
+<input id="sellerPhone1" name="sellerPhone[]" required="" type="tel"/>
+</div>
+<button onclick="addSeller()" type="button">+ Add Another Seller</button>
+</fieldset>
+
+</div>
+<div class="question" data-qid="Q035"><fieldset>
+<legend>What is the Property Address?</legend>
+<label for="streetAddress">Street Address:</label>
+<input id="streetAddress" name="streetAddress" required="" type="text"/>
+<label for="city">City:</label>
+<input id="city" name="city" required="" type="text"/>
+<label for="state">State:</label>
+<input id="state" name="state" readonly="" type="text" value="TX"/>
+<label for="zipCode">Zip Code:</label>
+<input id="zipCode" name="zipCode" pattern="\d{5}" required="" title="Enter a 5-digit ZIP code" type="text"/>
+</fieldset>
+</div>
+<div class="question" data-qid="Q036"><label for="listPrice">What is the List Price?</label>
+<input id="listPrice" min="0" name="listPrice" placeholder="e.g. 350000" step="0.01" type="number"/>
+</div>
+<div class="question" data-qid="Q037"><fieldset>
+<legend>What is the Start and End Date of your Listing Agreement?</legend>
+<label for="listingStartDate">Start Date:</label>
+<input id="listingStartDate" name="listingStartDate" type="date"/>
+<label for="listingEndDate">End Date:</label>
+<input id="listingEndDate" name="listingEndDate" type="date"/>
+</fieldset>
+</div>
+<div class="question" data-qid="Q038"><fieldset>
+<legend>What is the commission &amp; is there any BAC commission being offered?</legend>
+<label for="totalCommission">Total Commission (% or $):</label>
+<input id="totalCommission" min="0" name="totalCommission" placeholder="e.g. 6" step="0.01" type="number"/>
+<label for="bacCommission">BAC Commission Offered (% or $):</label>
+<input id="bacCommission" min="0" name="bacCommission" placeholder="e.g. 3" step="0.01" type="number"/>
+</fieldset>
+</div>
+<div class="question" data-qid="Q039"><label for="photoDate">What date have photos been scheduled for?</label>
+<input id="photoDate" name="photoDate" type="date"/>
+<small>(Or forward me the photos if already completed)</small>
+</div>
+<div class="question" data-qid="Q040"><label for="liveDate">What is your anticipated Live Date?</label>
+<input id="liveDate" name="liveDate" type="date"/>
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S012" data-section="S012" data-survey-id="SRV001" style="display:none">
+      <h2>Listing Preparation - Listing Agreement</h2>
+      <p class="section-desc">Listing Agreement</p>
+      <div class="question" data-qid="Q041"><label for="mandatoryHOA">Is the property in a Mandatory HOA?</label>
+<select id="mandatoryHOA" name="mandatoryHOA" required="">
+<option value="">--Select an option--</option>
+<option value="Yes">Yes</option>
+<option value="No">No</option>
+<option value="Voluntary">Voluntary</option>
+</select>
+</div>
+<div class="question" data-qid="Q042"><label for="protectionPeriod">Number of days in Protection Period:</label>
+<input id="protectionPeriod" min="1" name="protectionPeriod" placeholder="e.g. 90" type="number"/>
+</div>
+<div class="question" data-qid="Q043"><label for="brokerCounty">In what County are amounts payable to the Broker?</label>
+<input id="brokerCounty" name="brokerCounty" placeholder="e.g. Travis County" required="" type="text"/>
+</div>
+<div class="question" data-qid="Q044"><label for="preferredTitleCompany">Who is your preferred Title Company?</label>
+<input id="preferredTitleCompany" name="preferredTitleCompany" placeholder="Enter company name or type N/A" required="" type="text"/>
+</div>
+<div class="question" data-qid="Q045"><fieldset>
+<legend>Is there an existing Survey on file?</legend>
+<label><input name="surveyOnFile" required="" type="radio" value="Yes"/> Yes</label><br/>
+<label><input name="surveyOnFile" type="radio" value="No"/> No</label><br/>
+<label><input name="surveyOnFile" type="radio" value="Unsure"/> Unsure</label>
+</fieldset>
+</div>
+<div class="question" data-qid="Q046"><fieldset>
+<legend>Is the Onsite Sewer Addendum (OSS) needed?</legend>
+<label><input name="ossNeeded" required="" type="radio" value="Yes"/> Yes</label><br/>
+<label><input name="ossNeeded" type="radio" value="No"/> No</label><br/>
+<label><input name="ossNeeded" type="radio" value="Unsure"/> Unsure</label>
+</fieldset>
+</div>
+<div class="question" data-qid="Q047"><label for="nearbySchools">Are there Elementary, Middle &amp; High School nearby?</label>
+<input id="nearbySchools" name="nearbySchools" placeholder="e.g. Elm Creek Elementary" required="" type="text"/>
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S013" data-section="S013" data-survey-id="SRV001" style="display:none">
+      <h2>Listing Preparation - Additional Information</h2>
+      <p class="section-desc">Additional Information</p>
+      <div class="question" data-qid="Q048"><label for="propertyFeatures">Any property features you want highlighted?</label>
+<textarea id="propertyFeatures" name="propertyFeatures" placeholder="e.g. Newly renovated kitchen, spacious backyard, energy-efficient windows..." rows="4"></textarea></div>
+<div class="question" data-qid="Q049"><label for="listingNotes">Notes/Additional Information pertaining to your listing:</label>
+<textarea id="listingNotes" name="listingNotes" placeholder="e.g. Seller prefers weekend showings, property includes solar panels, recent roof replacement..." rows="4"></textarea>
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S014" data-section="S014" data-survey-id="SRV001" style="display:none">
+      <h2>MLS Input Only</h2>
+      <p class="section-desc">MLS Input Only</p>
+      <div class="question" data-qid="Q050"><fieldset>
+<legend>Which MLS(s) would you like the property uploaded to?</legend>
+<label><input name="mlsOptions[]" type="checkbox" value="GTAR"/> GTAR</label><br/>
+<label><input name="mlsOptions[]" type="checkbox" value="LAAR"/> LAAR</label><br/>
+<label><input name="mlsOptions[]" type="checkbox" value="NETREIS"/> NETREIS</label><br/>
+<label><input name="mlsOptions[]" type="checkbox" value="HAR"/> HAR</label>
+</fieldset>
+</div>
+<div class="question" data-qid="Q051"><fieldset>
+<legend>What is the Property Address?</legend>
+<label for="streetAddress">Street Address:</label>
+<input id="streetAddress" name="streetAddress" required="" type="text"/>
+<label for="city">City:</label>
+<input id="city" name="city" required="" type="text"/>
+<label for="state">State:</label>
+<input id="state" name="state" readonly="" type="text" value="TX"/>
+<label for="zipCode">Zip Code:</label>
+<input id="zipCode" name="zipCode" pattern="\d{5}" required="" title="Enter a 5-digit ZIP code" type="text"/>
+</fieldset>
+</div>
+<div class="question" data-qid="Q052"><label for="listPrice">What is the List Price?</label>
+<input id="listPrice" min="0" name="listPrice" placeholder="e.g. 350000" step="0.01" type="number"/>
+</div>
+<div class="question" data-qid="Q053"><label for="listingEndDate">What is the Listing End Date?</label>
+<input id="listingEndDate" name="listingEndDate" required="" type="date"/>
+<small>(It is the Agent's responsibility to input the Start Date)</small>
+</div>
+<div class="question" data-qid="Q054"><label for="preferredTitleCompany">Who is your preferred Title Company?</label>
+<input id="preferredTitleCompany" name="preferredTitleCompany" placeholder="Enter company name or type N/A" required="" type="text"/>
+<small>(Required for NETREIS &amp; HAR or type N/A)</small>
+</div>
+<div class="question" data-qid="Q055"><fieldset>
+<legend>Can you provide the Room Dimensions for the Bedrooms, Kitchen, Living Room &amp; Dining Room?</legend>
+<p>(Required for NETREIS &amp; HAR listings or type N/A)</p>
+<label for="bedroomDimensions">Bedrooms:</label>
+<input id="bedroomDimensions" name="bedroomDimensions" placeholder="e.g. 12ft x 14ft or N/A" required="" type="text"/>
+<label for="kitchenDimensions">Kitchen:</label>
+<input id="kitchenDimensions" name="kitchenDimensions" placeholder="e.g. 10ft x 12ft or N/A" required="" type="text"/>
+<label for="livingRoomDimensions">Living Room:</label>
+<input id="livingRoomDimensions" name="livingRoomDimensions" placeholder="e.g. 15ft x 20ft or N/A" required="" type="text"/>
+<label for="diningRoomDimensions">Dining Room:</label>
+<input id="diningRoomDimensions" name="diningRoomDimensions" placeholder="e.g. 10ft x 10ft or N/A" required="" type="text"/>
+</fieldset>
+</div>
+<div class="question" data-qid="Q056"><label for="photoDate">What date have photos been scheduled for?</label>
+<input id="photoDate" name="photoDate" type="date"/>
+<small>(Or forward me the photos if already completed)</small>
+</div>
+<div class="question" data-qid="Q057"><label for="liveDate">What is your anticipated Live Date?</label>
+<input id="liveDate" name="liveDate" type="date"/>
+</div>
+<div class="question" data-qid="Q058"><label for="propertyFeatures">Any property features you want highlighted?</label>
+<textarea id="propertyFeatures" name="propertyFeatures" placeholder="e.g. Newly renovated kitchen, spacious backyard, energy-efficient windows..." rows="4"></textarea></div>
+<div class="question" data-qid="Q059"><label for="associatedDocs">
+  If the property is already listed, I will download a copy of all Associated Docs.<br/>
+  Otherwise, please send me a copy of anything that needs to be uploaded:<br/>
+<small>(Survey, Seller’s Disclosure, LBP, Onsite Sewer…etc)</small>
+</label>
+<textarea id="associatedDocs" name="associatedDocs" placeholder="List documents or type N/A if already uploaded" required="" rows="4"></textarea>
+</div>
+    </section>
+    
+    <section class="form-section" id="SRV001_S015" data-section="S015" data-survey-id="SRV001" style="display:none">
+      <h2>Additional documents and Privacy Policy</h2>
+      <p class="section-desc">Additional documents and Privacy Policy</p>
+      <div class="question" data-qid="Q060"><label for="propertyNotes">Notes/Additional Information pertaining to this property:</label>
+<textarea id="propertyNotes" name="propertyNotes" placeholder="e.g. Property includes a detached guest house, recent plumbing upgrades, seller prefers weekday showings..." rows="4"></textarea>
+</div>
+<div class="question" data-qid="Q061"><label for="associatedDocuments">Any Associated Documents:</label>
+<input id="associatedDocuments" multiple="" name="associatedDocuments[]" required="" type="file"/></div>
+<div class="question" data-qid="Q062"><fieldset>
+<legend>
+    By submitting this form, you confirm that you have authorization to share your client's property information with Steele Transactions for the purpose of inputting property listing(s) information into the MLS.  
+    <br/>
+    Our <a href="https://steeletransactions.com/wp-content/uploads/2023/05/Steele-Transactions-Privacy-Policy-1.pdf" target="_blank">Privacy Policy</a> can be accessed here.
+  </legend>
+<label><input name="authorizationConfirmed" required="" type="radio" value="Yes"/> Yes</label><br/>
+<label><input name="authorizationConfirmed" type="radio" value="No"/> No</label>
+</fieldset></div>
+    </section>
+    
+    <div class="submit-bar">
+      <button type="submit" class="btn">Submit</button>
+      <span class="note" id="status"></span>
+    </div>
+  </form>
+
+<script>
+const BRANCH = {
+  "start": "SRV001_S001",
+  "surveyId": "SRV001",
+  "sections": {
+    "SRV001_S001": {
+      "title": "Request Type",
+      "question": "Q001",
+      "branches": {
+        "Offer Writing": "SRV001_S002",
+        "Listing Preparation": "SRV001_S011",
+        "MLS Input Only": "SRV001_S014"
+      }
+    },
+    "SRV001_S002": {
+      "title": "Offer Writing - Buyer Rep",
+      "question": "Q004",
+      "branches": {
+        "Yes": "SRV001_S003",
+        "No": "SRV001_S004"
+      }
+    },
+    "SRV001_S003": {
+      "title": "Offer Writing - Buyer Rep Details",
+      "next": "SRV001_S004"
+    },
+    "SRV001_S004": {
+      "title": "Offer Writing - Property Address and Financing",
+      "question": "Q010",
+      "branches": {
+        "Cash": "SRV001_S006",
+        "FHA": "SRV001_S005",
+        "Conventional": "SRV001_S005",
+        "VA": "SRV001_S005",
+        "USDA": "SRV001_S005",
+        "Other": "SRV001_S005"
+      }
+    },
+    "SRV001_S005": {
+      "title": "Offer Writing - Third Party Financing",
+      "next": "SRV001_S006"
+    },
+    "SRV001_S006": {
+      "title": "Offer Writing - Offer Information",
+      "question": "Q021",
+      "branches": {
+        "Yes": "SRV001_S007",
+        "No": "SRV001_S008",
+        "Voluntary": "SRV001_S008"
+      }
+    },
+    "SRV001_S007": {
+      "title": "Offer Writing - HOA Details",
+      "next": "SRV001_S008"
+    },
+    "SRV001_S008": {
+      "title": "Offer Writing - Offer Information",
+      "question": "Q030",
+      "branches": {
+        "Yes": "SRV001_S009",
+        "No": "SRV001_S010"
+      }
+    },
+    "SRV001_S009": {
+      "title": "Offer Writing - Commission",
+      "next": "SRV001_S015"
+    },
+    "SRV001_S010": {
+      "title": "Offer Writing - Commission",
+      "next": "SRV001_S015"
+    },
+    "SRV001_S011": {
+      "title": "Listing Preparation - Listing Information",
+      "question": "Q033",
+      "branches": {
+        "Yes": [
+          "SRV001_S013",
+          "SRV001_S015"
+        ],
+        "No": [
+          "SRV001_S012"
+        ],
+        "Yes but I want to change some information (such as the # of days in Protection Period)": [
+          "SRV001_S012"
+        ],
+        "Yes - but I want to change some information": [
+          "SRV001_S012"
+        ]
+      }
+    },
+    "SRV001_S012": {
+      "title": "Listing Preparation - Listing Agreement",
+      "next": [
+        "SRV001_S013",
+        "SRV001_S015"
+      ]
+    },
+    "SRV001_S013": {
+      "title": "Listing Preparation - Seller and Property",
+      "next": "SRV001_S015"
+    },
+    "SRV001_S014": {
+      "title": "MLS Input Only",
+      "next": "SRV001_S015"
+    },
+    "SRV001_S015": {
+      "title": "Additional documents and Privacy Policy"
+    }
+  }
+};
+const Q_TO_FIELD = {"Q001": "serviceSelection", "Q002": "requestorName", "Q003": "requestorEmail", "Q004": "buyersRep", "Q006": "buyersRepStart", "Q007": "buyersAgentCommission", "Q008": "remarks", "Q009": "streetAddress", "Q010": "financingType", "Q011": "downPayment", "Q012": "interestCap", "Q013": "loanTerm", "Q014": "financingApprovalDays", "Q015": "salesPrice", "Q016": "titleCompany", "Q017": "earnestMoney", "Q018": "titlePolicyPayer", "Q019": "surveyResponsibility", "Q020": "titlePolicyObjections", "Q021": "hoaStatus", "Q022": "hoaInfoDays", "Q023": "buyerFees", "Q024": "infoPayer", "Q025": "buyerCondition", "Q026": "homeWarrantyAmount", "Q027": "closingDate", "Q028": "leaseback", "Q029": "sellerConcessions", "Q030": "sellerPaysBAC", "Q031": "sellerBACAmount", "Q032": "listingBrokerBAC", "Q033": "listingAgreementStatus", "Q035": "streetAddress", "Q036": "listPrice", "Q037": "listingStartDate", "Q038": "totalCommission", "Q039": "photoDate", "Q040": "liveDate", "Q041": "mandatoryHOA", "Q042": "protectionPeriod", "Q043": "brokerCounty", "Q044": "preferredTitleCompany", "Q045": "surveyOnFile", "Q046": "ossNeeded", "Q047": "nearbySchools", "Q048": "propertyFeatures", "Q049": "listingNotes", "Q051": "streetAddress", "Q052": "listPrice", "Q053": "listingEndDate", "Q054": "preferredTitleCompany", "Q055": "bedroomDimensions", "Q056": "photoDate", "Q057": "liveDate", "Q058": "propertyFeatures", "Q059": "associatedDocs", "Q060": "propertyNotes", "Q062": "authorizationConfirmed"};
+
+function norm(v) { return String(v || '').toLowerCase().replace(/[–—-]/g,' ').replace(/\s+/g,' ').trim(); }
+
+
+function getAnswerByField(field) {
+  if (!field) return '';
+  const nodes = document.getElementsByName(field);
+  if (!nodes || !nodes.length) return '';
+  const first = nodes[0];
+  if (first.type === 'radio') {
+    const checked = document.querySelector('[name="' + field + '"]:checked');
+    return checked ? (checked.value || '') : '';
+  }
+  if (first.type === 'checkbox') {
+    const checked = Array.from(document.querySelectorAll('[name="' + field + '"]:checked')).map(c => c.value);
+    return checked.length ? checked.join(',') : '';
+  }
+  if (first.tagName === 'SELECT') {
+    return first.value || '';
+  }
+  return first.value || '';
+}
+
+
+function nextFromSection(domId) {
+  const sec = BRANCH.sections[domId];
+  if (!sec) return [];
+  if (sec.question) {
+    const field = Q_TO_FIELD[sec.question];
+    const ans = getAnswerByField(field);
+    if (!ans) return [];
+    if (sec.branches) {
+      for (const [k,v] of Object.entries(sec.branches)) {
+        if (norm(ans) === norm(k)) return Array.isArray(v) ? v : [v];
+      }
+      return [];
+    }
+  }
+  if (sec.next) return Array.isArray(sec.next) ? sec.next : [sec.next];
+  return [];
+}
+
+// reveal only the next unanswered section
+function computeVisibleIncremental() {
+  const visible = new Set([BRANCH.start]);
+  const queue = [BRANCH.start];
+  const visited = new Set();
+  let steps = 0;
+  while (queue.length && steps++ < 200) {
+    const sid = queue.shift();
+    if (visited.has(sid)) continue;
+    visited.add(sid);
+    const nextIds = nextFromSection(sid);
+    for (const nid of nextIds) {
+      if (!nid) continue;
+      visible.add(nid);
+      const nsec = BRANCH.sections[nid];
+      if (nsec && nsec.question) {
+        const field = Q_TO_FIELD[nsec.question];
+        const ans = getAnswerByField(field);
+        if (ans) queue.push(nid); // only continue past answered sections
+      } else {
+        queue.push(nid); // sections without a question always flow
+      }
+    }
+  }
+  return visible;
+}
+
+function applyVisibility() {
+  const visible = computeVisibleIncremental();
+  Object.keys(BRANCH.sections).forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = visible.has(id) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.form-section').forEach(section => {
+    const hidden = getComputedStyle(section).display === 'none';
+    section.querySelectorAll('input,select,textarea').forEach(inp => {
+      if (hidden) { inp.dataset.wasRequired = inp.required ? '1' : '0'; inp.required = false; }
+      else if (inp.dataset.wasRequired === '1' || inp.hasAttribute('required')) { inp.required = true; }
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('intakeForm');
+  const names = new Set(Object.values(Q_TO_FIELD));
+  ['change','input'].forEach(evt => form.addEventListener(evt, function(e) {
+    if (e && e.target && names.has(e.target.name)) applyVisibility();
+  }));
+  const svc = document.getElementById('serviceSelection') || document.querySelector('[name="serviceSelection"]');
+  if (svc) svc.addEventListener('change', applyVisibility);
+
+  // ----- Submit to Google Apps Script -----
+  const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKfk1ifQskrjP-QaSzdBkbF9PsqCc9bgyN-jNATDIeVL9QkkCghwGyzwNmspgwWQXgeg/exec';
+
+  function collectData(form) {
+    const fd = new FormData();
+    const data = {};
+    form.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.type === 'file') return;
+      if (!el.name) return;
+      if (el.type === 'radio') {
+        if (!el.checked) return;
+        data[el.name] = el.value;
+      } else if (el.name.endsWith('[]')) {
+        if (!data[el.name]) data[el.name] = [];
+        if (el.value) data[el.name].push(el.value);
+      } else {
+        data[el.name] = el.value;
+      }
+    });
+    form.querySelectorAll('input[type="file"]').forEach(inp => {
+      for (let i=0;i<inp.files.length;i++) fd.append(inp.name || 'file', inp.files[i]);
+    });
+    fd.append('data', JSON.stringify(data));
+    return fd;
+  }
+
+  //form.addEventListener('submit', async function(e) {
+  //  e.preventDefault();
+  //  const status = document.getElementById('status');
+  //  status.textContent = 'Sending...';
+  //  try {
+  //    const payload = collectData(form);
+  //    const res = await fetch(GAS_ENDPOINT, { method: 'POST', body: payload, mode: 'cors' });
+  //    const json = await res.json();
+  //    if (json.success) {
+  //      status.textContent = 'Submitted. Reference ID: ' + json.respondentId;
+  //      form.reset();
+        // Reset repeaters if present
+  //      const buyers = document.getElementById('buyersList'); if (buyers) buyers.innerHTML='';
+  //      const sellers = document.getElementById('sellersList'); if (sellers) sellers.innerHTML='';
+  //      applyVisibility();
+  //    } else {
+  //      status.textContent = 'Error: ' + (json.message || 'Unknown error');
+  //    }
+  //  } catch (err) {
+  //    console.error(err);
+  //    status.textContent = 'Error sending form';
+  //  }
+  //});
+
+  applyVisibility();
+});
+</script>
+
+<script>
+const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKfk1ifQskrjP-QaSzdBkbF9PsqCc9bgyN-jNATDIeVL9QkkCghwGyzwNmspgwWQXgeg/exec';
+
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.querySelector('form');
+  if (!form) return;
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function collectPlainData(formEl) {
+    const out = {};
+    const fd = new FormData(formEl);
+    for (const [k, v] of fd.entries()) {
+      if (v instanceof File) continue;
+      if (k.endsWith('[]')) {
+        const key = k.slice(0, -2);
+        if (!Array.isArray(out[key])) out[key] = [];
+        out[key].push(v);
+      } else if (out[k] !== undefined) {
+        if (!Array.isArray(out[k])) out[k] = [out[k]];
+        out[k].push(v);
+      } else {
+        out[k] = v;
+      }
+    }
+    return out;
+  }
+
+  async function collectAttachments(formEl) {
+    const list = [];
+    const inputs = formEl.querySelectorAll('input[type="file"]');
+    for (const input of inputs) {
+      if (!input.files || !input.files.length) continue;
+      for (const f of input.files) {
+        list.push({
+          fileName: f.name,
+          mimeType: f.type || 'application/octet-stream',
+          fileData: await fileToBase64(f)
+        });
+      }
+    }
+    return list;
+  }
+
+  function statusEl() {
+    let el = document.getElementById('status');
+    if (!el) {
+      el = document.createElement('p');
+      el.id = 'status';
+      el.style.marginTop = '8px';
+      form.appendChild(el);
+    }
+    return el;
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const status = statusEl();
+    status.textContent = 'Sending';
+
+    try {
+      const data = collectPlainData(form);
+      const attachments = await collectAttachments(form);
+
+      const res = await fetch(GAS_ENDPOINT, {
+        method: 'POST',
+        body: JSON.stringify({ data, attachments })
+      });
+
+      const text = await res.text();
+      let json;
+      try { json = JSON.parse(text); } catch { json = { success:false, message:text }; }
+
+      if (json.success || json.ok) {
+        const ref = json.respondentId || '';
+        const link = json.filesUrl || '';
+        status.innerHTML = 'Submitted. ' + (ref ? 'Reference ID: ' + ref + ' ' : '') + (link ? '<a href="' + link + '" target="_blank">View upload</a>' : '');
+        form.reset();
+      } else {
+        status.textContent = 'Error: ' + (json.message || json.error || 'Unknown error');
+      }
+    } catch (err) {
+      status.textContent = 'Error: ' + err.message;
+    }
+  });
+});
+</script>
+
+</body>
+</html>
