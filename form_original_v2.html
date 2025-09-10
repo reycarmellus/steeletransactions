@@ -41,8 +41,8 @@
 
     
     <section class="form-section" id="SRV001_S001" data-section="S001" data-survey-id="SRV001" style="display:block">
-      <h2>Request Type</h2>
-      <p class="section-desc">Type of Service Request & Requestor Info</p>
+      <h2>Service Request & Agent Info</h2>
+      <!--<p class="section-desc">Type of Service Request & Requestor Info</p> -->
       <div class="question" data-qid="Q001"><label for="serviceSelection">Please select service:</label>
 <select id="serviceSelection" name="serviceSelection" required="">
 <option value="">--Select--</option>
@@ -50,17 +50,17 @@
 <option value="Listing Preparation">Listing Preparation</option>
 <option value="MLS Input Only">MLS Input Only</option>
 </select></div>
-<div class="question" data-qid="Q002"><label for="requestorName">Requestor Name:</label>
+<div class="question" data-qid="Q002"><label for="requestorName">Agent Name:</label>
 <input id="requestorName" name="requestorName" required="" type="text"/>
 </div>
-<div class="question" data-qid="Q003"><label for="requestorEmail">Requestor Email Address:</label>
+<div class="question" data-qid="Q003"><label for="requestorEmail">Agent Email Address:</label>
 <input id="requestorEmail" name="requestorEmail" placeholder="e.g. name@example.com" required="" type="email"/>
 </div>
     </section>
     
     <section class="form-section" id="SRV001_S002" data-section="S002" data-survey-id="SRV001" style="display:none">
       <h2>Offer Writing - Buyer's Rep</h2>
-      <p class="section-desc">Buyer's Rep</p>
+      <!--<p class="section-desc">Buyer's Rep</p>-->
       <div class="question" data-qid="Q004"><fieldset>
 <legend>Do you need me to prepare a Buyers Rep?</legend>
 <label><input name="buyersRep" required="" type="radio" value="Yes"/> Yes</label><br/>
@@ -70,7 +70,7 @@
     
     <section class="form-section" id="SRV001_S003" data-section="S003" data-survey-id="SRV001" style="display:none">
       <h2>Offer Writing - Buyer's Rep Details</h2>
-      <p class="section-desc">Buyer's Rep Details</p>
+      <!--<p class="section-desc">Buyer's Rep Details</p>-->
       <div class="question" data-qid="Q005"><fieldset id="buyersInfo">
 <legend>Buyer(s) Information</legend>
 <div class="buyer-entry">
@@ -93,13 +93,20 @@
 <input id="buyersRepEnd" name="buyersRepEnd" type="date"/>
 </fieldset>
 </div>
-<div class="question" data-qid="Q007"><label for="buyersAgentCommission">What is your BAC? (Buyer's Agent Commission):</label>
-<input id="buyersAgentCommission" min="0" name="buyersAgentCommission" placeholder="e.g. 3.00" step="0.01" title="Enter commission as a percentage or flat amount" type="number"/>
+<div class="question" data-qid="Q007">
+  <label for="buyersAgentCommission">What is your BAC? (Buyer's Agent Commission):</label>
+  <input 
+    id="buyersAgentCommission" 
+    name="buyersAgentCommission" 
+    type="text" 
+    placeholder="ex. 3" 
+    title="Enter commission as a percentage or flat amount"
+  />
 </div>
 <div class="question" data-qid="Q008"><!-- Section: Additional Notes -->
 <fieldset>
-<legend>Additional Notes</legend>
-<label for="remarks">Any other notes or remarks?</label><br/>
+<legend>Additional Information</legend>
+<!--<label for="remarks">Any other notes or remarks?</label><br/>-->
 <textarea cols="50" name="remarks" placeholder="Type your comments here..." rows="4"></textarea><br/><br/>
 </fieldset>
 </div>
@@ -107,7 +114,7 @@
     
     <section class="form-section" id="SRV001_S004" data-section="S004" data-survey-id="SRV001" style="display:none">
       <h2>Offer Writing - Property Address and Financing</h2>
-      <p class="section-desc">Property Address and Financing</p>
+      <!--<p class="section-desc">Property Address and Financing</p>-->
       <div class="question" data-qid="Q009"><fieldset>
 <legend>What is the Property Address?</legend>
 <label for="streetAddress">Street Address:</label>
@@ -140,7 +147,7 @@
     
     <section class="form-section" id="SRV001_S005" data-section="S005" data-survey-id="SRV001" style="display:none">
       <h2>Offer Writing - Third Party Financing</h2>
-      <p class="section-desc">Third Party Financing</p>
+      <!--<p class="section-desc">Third Party Financing</p>-->
       <div class="question" data-qid="Q011"><fieldset>
 <legend>What is the Down Payment &amp; Total Sales Price?</legend>
 <label for="downPayment">Down Payment:</label>
@@ -184,7 +191,7 @@
     
     <section class="form-section" id="SRV001_S006" data-section="S006" data-survey-id="SRV001" style="display:none">
       <h2>Offer Writing - Offer Information</h2>
-      <p class="section-desc">Offer Information</p>
+      <!--<p class="section-desc">Offer Information</p>-->
       <div class="question" data-qid="Q015"><label for="salesPrice">What is the Sales Price?</label>
 <input id="salesPrice" min="0" name="salesPrice" placeholder="e.g. 250000" step="0.01" type="number"/>
 </div>
@@ -201,21 +208,66 @@
 <input id="optionDays" name="optionDays" required="" type="number"/>
 </fieldset>
 </div>
-<div class="question" data-qid="Q018"><fieldset>
-<legend>Who pays the Title Policy?</legend>
-<label><input name="titlePolicyPayer" required="" type="radio" value="Buyer"/> Buyer</label><br/>
-<label><input name="titlePolicyPayer" type="radio" value="Seller"/> Seller</label>
-</fieldset>
+<div class="question" data-qid="Q018">
+  <fieldset>
+    <legend>Who pays the Title Policy?</legend>
+    <label>
+      <input 
+        type="checkbox" 
+        name="titlePolicyPayer" 
+        value="Buyer"
+      /> Buyer
+    </label><br/>
+    <label>
+      <input 
+        type="checkbox" 
+        name="titlePolicyPayer" 
+        value="Seller"
+      /> Seller
+    </label>
+  </fieldset>
 </div>
-<div class="question" data-qid="Q019"><fieldset>
-<legend>If no Survey is provided, who pays for a new one?</legend>
-<label><input name="surveyResponsibility" required="" type="radio" value="Buyer"/> Buyer</label><br/>
-<label><input name="surveyResponsibility" type="radio" value="Seller"/> Seller</label><br/>
-<label><input name="surveyResponsibility" type="radio" value="BuyersExpense"/> Amend Survey Shortages @ Buyers Expense</label><br/>
-<label><input name="surveyResponsibility" type="radio" value="SellersExpense"/> Amend Survey Shortages @ Sellers Expense</label><br/>
-<label><input name="surveyResponsibility" type="radio" value="NoAmend"/> No Amend Survey Shortages</label>
-</fieldset>
+<div class="question" data-qid="Q019">
+  <fieldset>
+    <legend>If no Survey is provided, who pays for a new one?</legend>
+    <label>
+      <input 
+        type="checkbox" 
+        name="surveyResponsibility" 
+        value="Buyer"
+      /> Buyer
+    </label><br/>
+    <label>
+      <input 
+        type="checkbox" 
+        name="surveyResponsibility" 
+        value="Seller"
+      /> Seller
+    </label><br/>
+    <label>
+      <input 
+        type="checkbox" 
+        name="surveyResponsibility" 
+        value="BuyersExpense"
+      /> Amend Survey Shortages @ Buyers Expense
+    </label><br/>
+    <label>
+      <input 
+        type="checkbox" 
+        name="surveyResponsibility" 
+        value="SellersExpense"
+      /> Amend Survey Shortages @ Sellers Expense
+    </label><br/>
+    <label>
+      <input 
+        type="checkbox" 
+        name="surveyResponsibility" 
+        value="NoAmend"
+      /> No Amend Survey Shortages
+    </label>
+  </fieldset>
 </div>
+
 <div class="question" data-qid="Q020"><label for="titlePolicyObjections">Does Buyer have Objections to the Title Policy?</label>
 <textarea id="titlePolicyObjections" name="titlePolicyObjections" placeholder="Enter any objections or concerns here..." rows="4"></textarea>
 </div>
@@ -231,7 +283,7 @@
     
     <section class="form-section" id="SRV001_S007" data-section="S007" data-survey-id="SRV001" style="display:none">
       <h2>Offer Writing - HOA Details</h2>
-      <p class="section-desc">HOA Details</p>
+      <!--<p class="section-desc">HOA Details</p>-->
       <div class="question" data-qid="Q022"><label for="hoaInfoDays">Within how many days do you want the HOA info supplied?</label>
 <input id="hoaInfoDays" min="1" name="hoaInfoDays" placeholder="e.g. 5" type="number"/>
 </div>
@@ -247,7 +299,7 @@
     
     <section class="form-section" id="SRV001_S008" data-section="S008" data-survey-id="SRV001" style="display:none">
       <h2>Offer Writing - Offer Information</h2>
-      <p class="section-desc">Offer Information</p>
+      <!--<p class="section-desc">Offer Information</p>-->
       <div class="question" data-qid="Q025"><label for="buyerCondition">Buyer accepts property "AS IS" or is it subject to repairs?</label>
 <textarea id="buyerCondition" name="buyerCondition" required="" rows="4"></textarea>
 </div>
@@ -280,7 +332,7 @@
     
     <section class="form-section" id="SRV001_S009" data-section="S009" data-survey-id="SRV001" style="display:none">
       <h2>Offer Writing - Commission</h2>
-      <p class="section-desc">Commission</p>
+      <!--<p class="section-desc">Commission</p>-->
       <div class="question" data-qid="Q031"><label for="sellerBACAmount">How much are you requesting the Seller to pay BAC?</label>
 <input id="sellerBACAmount" min="0" name="sellerBACAmount" placeholder="e.g. 3000" step="0.01" type="number"/>
 </div>
@@ -288,7 +340,7 @@
     
     <section class="form-section" id="SRV001_S010" data-section="S010" data-survey-id="SRV001" style="display:none">
       <h2>Offer Writing - Commission</h2>
-      <p class="section-desc">Commission</p>
+      <!--<p class="section-desc">Commission</p>-->
       <div class="question" data-qid="Q032"><label for="listingBrokerBAC">How much are you requesting the Listing Broker to pay towards BAC?</label>
 <input id="listingBrokerBAC" min="0" name="listingBrokerBAC" placeholder="e.g. 1500" step="0.01" type="number"/>
 <small>(Compensation Agreement between Brokers will be included)</small>
@@ -297,7 +349,7 @@
     
     <section class="form-section" id="SRV001_S011" data-section="S011" data-survey-id="SRV001" style="display:none">
       <h2>Listing Preparation - Listing Information</h2>
-      <p class="section-desc">Listing Preparation</p>
+      <!--<p class="section-desc">Listing Preparation</p>-->
       <div class="question" data-qid="Q033"><label for="listingAgreementStatus">Have I prepared a Listing Agreement for you before?</label>
 <select id="listingAgreementStatus" name="listingAgreementStatus">
 <option value="">--Select an option--</option>
@@ -362,7 +414,7 @@
     
     <section class="form-section" id="SRV001_S012" data-section="S012" data-survey-id="SRV001" style="display:none">
       <h2>Listing Preparation - Listing Agreement</h2>
-      <p class="section-desc">Listing Agreement</p>
+      <!--<p class="section-desc">Listing Agreement</p>-->
       <div class="question" data-qid="Q041"><label for="mandatoryHOA">Is the property in a Mandatory HOA?</label>
 <select id="mandatoryHOA" name="mandatoryHOA" required="">
 <option value="">--Select an option--</option>
@@ -401,7 +453,7 @@
     
     <section class="form-section" id="SRV001_S013" data-section="S013" data-survey-id="SRV001" style="display:none">
       <h2>Listing Preparation - Additional Information</h2>
-      <p class="section-desc">Additional Information</p>
+      <!--<p class="section-desc">Additional Information</p>-->
       <div class="question" data-qid="Q048"><label for="propertyFeatures">Any property features you want highlighted?</label>
 <textarea id="propertyFeatures" name="propertyFeatures" placeholder="e.g. Newly renovated kitchen, spacious backyard, energy-efficient windows..." rows="4"></textarea></div>
 <div class="question" data-qid="Q049"><label for="listingNotes">Notes/Additional Information pertaining to your listing:</label>
@@ -411,7 +463,7 @@
     
     <section class="form-section" id="SRV001_S014" data-section="S014" data-survey-id="SRV001" style="display:none">
       <h2>MLS Input Only</h2>
-      <p class="section-desc">MLS Input Only</p>
+      <!--<p class="section-desc">MLS Input Only</p>-->
       <div class="question" data-qid="Q050"><fieldset>
 <legend>Which MLS(s) would you like the property uploaded to?</legend>
 <label><input name="mlsOptions[]" type="checkbox" value="GTAR"/> GTAR</label><br/>
@@ -476,7 +528,7 @@
     
     <section class="form-section" id="SRV001_S015" data-section="S015" data-survey-id="SRV001" style="display:none">
       <h2>Additional documents and Privacy Policy</h2>
-      <p class="section-desc">Additional documents and Privacy Policy</p>
+      <!--<p class="section-desc">Additional documents and Privacy Policy</p>-->
       <div class="question" data-qid="Q060"><label for="propertyNotes">Notes/Additional Information pertaining to this property:</label>
 <textarea id="propertyNotes" name="propertyNotes" placeholder="e.g. Property includes a detached guest house, recent plumbing upgrades, seller prefers weekday showings..." rows="4"></textarea>
 </div>
@@ -1052,6 +1104,54 @@ if (json.success || json.ok) {
   window.showRequestModal = showRequestModal;
 })();
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const financingSel = document.getElementById('financingType');
+  const s004 = document.getElementById('SRV001_S004');
+  const s006 = document.getElementById('SRV001_S006');
+  if (!financingSel || !s004 || !s006) return;
+
+  // Find the Q015 block inside S006 and remember its original spot
+  const q015InS006 = s006.querySelector('[data-qid="Q015"]');
+  if (!q015InS006) return;
+  const q015Anchor = document.createComment('Q015 original spot');
+  q015InS006.parentNode.insertBefore(q015Anchor, q015InS006);
+
+  // Create a placeholder in S004 right after Q010
+  const q010Block = s004.querySelector('[data-qid="Q010"]');
+  const s004Holder = document.createElement('div');
+  s004Holder.id = 'cashSalesPriceHolder';
+  if (q010Block && q010Block.nextSibling) {
+    q010Block.parentNode.insertBefore(s004Holder, q010Block.nextSibling);
+  } else if (q010Block) {
+    q010Block.parentNode.appendChild(s004Holder);
+  } else {
+    s004.appendChild(s004Holder);
+  }
+
+  function relocateSalesPrice() {
+    const val = (financingSel.value || '').trim();
+    // When Cash move Q015 under Q010
+    if (val === 'Cash') {
+      if (!s004Holder.contains(q015InS006)) {
+        s004Holder.appendChild(q015InS006);
+        // Make sure the moved block is visible with the section
+        q015InS006.style.display = 'block';
+      }
+    } else {
+      // Return Q015 to its original location in S006
+      if (q015InS006.parentNode !== s006) {
+        q015Anchor.parentNode.insertBefore(q015InS006, q015Anchor.nextSibling);
+      }
+    }
+  }
+
+  financingSel.addEventListener('change', relocateSalesPrice);
+  relocateSalesPrice();
+});
+</script>
+
 
 </body>
 </html>
