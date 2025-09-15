@@ -338,7 +338,7 @@
 <input id="listPrice" min="0" name="listPrice" placeholder="e.g. 350000" step="0.01" type="number"/>
 </div>
 <div class="question" data-qid="Q037"><fieldset>
-<legend>What is the Start and End Date of your Listing Agreement?</legend>
+<legend style="font-weight: normal;">What is the Start and End Date of your Listing Agreement?</legend>
 <label for="listingStartDate">Start Date:</label>
 <input id="listingStartDate" name="listingStartDate" type="date"/>
 <label for="listingEndDate">End Date:</label>
@@ -346,7 +346,7 @@
 </fieldset>
 </div>
 <div class="question" data-qid="Q038"><fieldset>
-<legend>What is the commission &amp; is there any BAC commission being offered?</legend>
+<legend style="font-weight: normal;">What is the commission &amp; is there any BAC commission being offered?</legend>
 <label for="totalCommission">Total Commission (% or $):</label>
 <input id="totalCommission" min="0" name="totalCommission" placeholder="e.g. 6" step="0.01" type="number"/>
 <label for="bacCommission">BAC Commission Offered (% or $):</label>
@@ -354,8 +354,8 @@
 </fieldset>
 </div>
 <div class="question" data-qid="Q039"><label for="photoDate">What date have photos been scheduled for?</label>
-<input id="photoDate" name="photoDate" type="date"/>
 <small>(Or forward me the photos if already completed)</small>
+<input id="photoDate" name="photoDate" type="date"/>
 </div>
 <div class="question" data-qid="Q040"><label for="liveDate">What is your anticipated Live Date?</label>
 <input id="liveDate" name="liveDate" type="date"/>
@@ -382,14 +382,14 @@
 <input id="preferredTitleCompany" name="preferredTitleCompany" placeholder="Enter company name or type N/A" required="" type="text"/>
 </div>
 <div class="question" data-qid="Q045"><fieldset>
-<legend>Is there an existing Survey on file?</legend>
+<legend style="font-weight: normal;">Is there an existing Survey on file?</legend>
 <label><input name="surveyOnFile" required="" type="radio" value="Yes"/> Yes</label><br/>
 <label><input name="surveyOnFile" type="radio" value="No"/> No</label><br/>
 <label><input name="surveyOnFile" type="radio" value="Unsure"/> Unsure</label>
 </fieldset>
 </div>
 <div class="question" data-qid="Q046"><fieldset>
-<legend>Is the Onsite Sewer Addendum (OSS) needed?</legend>
+<legend style="font-weight: normal;">Is the Onsite Sewer Addendum (OSS) needed?</legend>
 <label><input name="ossNeeded" required="" type="radio" value="Yes"/> Yes</label><br/>
 <label><input name="ossNeeded" type="radio" value="No"/> No</label><br/>
 <label><input name="ossNeeded" type="radio" value="Unsure"/> Unsure</label>
@@ -435,15 +435,15 @@
 <input id="listPrice" min="0" name="listPrice" placeholder="e.g. 350000" step="0.01" type="number"/>
 </div>
 <div class="question" data-qid="Q053"><label for="listingEndDate">What is the Listing End Date?</label>
-<input id="listingEndDate" name="listingEndDate" required="" type="date"/>
 <small>(It is the Agent's responsibility to input the Start Date)</small>
+<input id="listingEndDate" name="listingEndDate" required="" type="date"/>
 </div>
 <div class="question" data-qid="Q054"><label for="preferredTitleCompany">Who is your preferred Title Company?</label>
 <input id="preferredTitleCompany" name="preferredTitleCompany" placeholder="Enter company name or type N/A" required="" type="text"/>
-<small>(Required for NETREIS &amp; HAR or type N/A)</small>
+<!--<small>(Required for NETREIS &amp; HAR or type N/A)</small>-->
 </div>
 <div class="question" data-qid="Q055"><fieldset>
-<legend>Can you provide the Room Dimensions for the Bedrooms, Kitchen, Living Room &amp; Dining Room?</legend>
+<legend style="font-weight: normal;">Can you provide the Room Dimensions for the Bedrooms, Kitchen, Living Room &amp; Dining Room?</legend>
 <p>(Required for NETREIS &amp; HAR listings or type N/A)</p>
 <label for="bedroomDimensions">Bedrooms:</label>
 <input id="bedroomDimensions" name="bedroomDimensions" placeholder="e.g. 12ft x 14ft or N/A" required="" type="text"/>
@@ -1109,5 +1109,92 @@ function toggleLeasebackDetails() {
 }
 // run once on load to sync state
 document.addEventListener('DOMContentLoaded', toggleLeasebackDetails);
-</script></body>
+</script>
+<!-- Injected rules: skip S013 on specific condition; dynamic privacy policy and Q060 placeholder -->
+<script>
+(function(){
+  function norm(v){ return String(v||'').toLowerCase().replace(/[–—-]/g,' ').replace(/\s+/g,' ').trim(); }
+  function getAns(name){
+    const nodes = document.getElementsByName(name);
+    if(!nodes || !nodes.length) return '';
+    const first = nodes[0];
+    if (first.type === 'radio') {
+      const checked = document.querySelector('[name="'+name+'"]:checked');
+      return checked ? checked.value : '';
+    }
+    if (first.tagName === 'SELECT') return first.value || '';
+    return first.value || '';
+  }
+
+  // 1. If Q001 = Listing Preparation and Q033 = No then skip S013 else keep everything
+  function hideS013IfNeeded(){
+    try{
+      const svc = getAns('serviceSelection');          // Q001
+      const q033 = getAns('listingAgreementStatus');   // Q033
+      const s013 = document.getElementById('SRV001_S013');
+      if (!s013) return;
+      const shouldSkip = norm(svc) === 'listing preparation' && norm(q033) === 'no';
+      if (shouldSkip) {
+        s013.style.display = 'none';
+        s013.querySelectorAll('input,select,textarea').forEach(inp => { inp.dataset.wasRequired = inp.required ? '1' : '0'; inp.required = false; });
+      }
+    }catch(e){}
+  }
+
+  // 2. Dynamic Privacy Policy text and Q060 placeholder based on Q001
+  function updatePolicyAndQ060(){
+    try{
+      const svc = getAns('serviceSelection'); // Q001
+      const legend = document.querySelector('[data-qid="Q062"] legend');
+      const linkHtml = 'Our <a href="https://steeletransactions.com/wp-content/uploads/2023/05/Steele-Transactions-Privacy-Policy-1.pdf" target="_blank">Privacy Policy</a> can be accessed here.';
+
+      if (legend) {
+        if (norm(svc) === 'listing preparation') {
+          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client\\'s contact information with Steele Transactions for the purpose of preparing a property listing.<br/>" + linkHtml;
+        } else if (norm(svc) === 'mls input only') {
+          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client\\'s contact information with Steele Transactions for the purpose of inputting a listing into the MLS.<br/>" + linkHtml;
+        } else if (norm(svc) === 'offer writing') {
+          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client\\'s contact information with Steele Transactions for the purpose of preparing an offer.<br/>" + linkHtml;
+        }
+      }
+
+      const q060 = document.getElementById('propertyNotes'); // Q060
+      if (q060) {
+        if (norm(svc) === 'listing preparation') {
+          q060.setAttribute('placeholder','e.g. # of Bed/Baths, Features you want highlighted, etc...');
+        } else if (norm(svc) === 'mls input only') {
+          q060.setAttribute('placeholder','');
+        }
+      }
+    }catch(e){}
+  }
+
+  // Hook into the existing visibility flow
+  const originalApply = window.applyVisibility;
+  if (typeof originalApply === 'function') {
+    window.applyVisibility = function(){
+      originalApply();
+      hideS013IfNeeded();
+      updatePolicyAndQ060();
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const form = document.getElementById('intakeForm');
+    if (!form) return;
+
+    form.addEventListener('change', function(e){
+      if (e && e.target && (e.target.name === 'serviceSelection' || e.target.name === 'listingAgreementStatus')) {
+        if (typeof window.applyVisibility === 'function') window.applyVisibility();
+      }
+    });
+
+    // Run once at load
+    if (typeof window.applyVisibility === 'function') window.applyVisibility();
+    else { hideS013IfNeeded(); updatePolicyAndQ060(); }
+  });
+})();
+</script>
+
+</body>
 </html>
