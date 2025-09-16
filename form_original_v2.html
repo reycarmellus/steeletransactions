@@ -796,7 +796,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function collectPlainData(formEl) {
-    const SCALAR_FIELDS = new Set(['streetAddress','city','state','zipCode','salesPrice','listPrice','listingEndDate','photoDate','liveDate','buyersRepStart','buyersRepEnd','listingStartDate','titleCompany','mandatoryHOA','brokerCounty','preferredTitleCompany']);
+    const SCALAR_FIELDS = new Set(['streetAddress','city','state','zipCode','salesPrice','listPrice','listingEndDate','photoDate','liveDate','buyersRepStart','buyersRepEnd','listingStartDate','titleCompany','mandatoryHOA','brokerCounty','preferredTitleCompany','propertyFeatures']);
     const out = {};
     const fd = new FormData(formEl);
     for (const [k, v] of fd.entries()) {
