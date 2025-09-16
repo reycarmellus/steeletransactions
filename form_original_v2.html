@@ -269,9 +269,7 @@
 <label for="leasebackDetails">If yes, provide details below:</label>
 <textarea id="leasebackDetails" name="leasebackDetails" placeholder="e.g. Seller to lease back for 30 days post-closing at $X/day" rows="4"></textarea>
 </div>-->
-<div id="leasebackTypeContainer" style="display:none; margin-top:8px;"><label>Leaseback Type:</label><br/><label><input name="leasebackType" type="radio" value="Buyers Temp Lease"/> Buyers Temp Lease</label><br/><label><input name="leasebackType" type="radio" value="Sellers Temp Lease"/> Sellers Temp Lease</label>
-<input type="hidden" name="Q028_type" id="Q028_type" />
-</div><div id="leasebackAdditionalInfoContainer" style="display:none; margin-top:8px;"><label for="leasebackAdditionalInfo">Leaseback - Additional Information:</label><textarea id="leasebackAdditionalInfo" name="leasebackAdditionalInfo" placeholder="Any extra notes about the leaseback" rows="3"></textarea></div>
+<div id="leasebackTypeContainer" style="display:none; margin-top:8px;"><label>Leaseback Type:</label><br/><label><input name="leasebackType" type="radio" value="Buyers Temp Lease"/> Buyers Temp Lease</label><br/><label><input name="leasebackType" type="radio" value="Sellers Temp Lease"/> Sellers Temp Lease</label></div><div id="leasebackAdditionalInfoContainer" style="display:none; margin-top:8px;"><label for="leasebackAdditionalInfo">Leaseback - Additional Information:</label><textarea id="leasebackAdditionalInfo" name="leasebackAdditionalInfo" placeholder="Any extra notes about the leaseback" rows="3"></textarea></div>
 </fieldset>
 </div>
 <div class="question" data-qid="Q029"><label for="sellerConcessions">Any Seller Concessions?</label>
@@ -608,7 +606,9 @@ const BRANCH = {
   }
 };
 const Q_TO_FIELD = {"Q001": "serviceSelection", "Q002": "requestorName", "Q003": "requestorEmail", "Q004": "buyersRep", "Q006": "buyersRepStart", "Q007": "buyersAgentCommission", "Q008": "remarks", "Q009": "streetAddress", "Q010": "financingType", "Q011": "downPayment", "Q012": "interestCap", "Q013": "loanTerm", "Q014": "financingApprovalDays", "Q015": "salesPrice", "Q016": "titleCompany", "Q017": "earnestMoney", "Q018": "titlePolicyPayer", "Q019": "surveyResponsibility", "Q020": "titlePolicyObjections", "Q021": "hoaStatus", "Q022": "hoaInfoDays", "Q023": "buyerFees", "Q024": "infoPayer", "Q025": "buyerCondition", "Q026": "homeWarrantyAmount", "Q027": "closingDate", "Q028": "leaseback", "Q029": "sellerConcessions", "Q030": "sellerPaysBAC", "Q031": "sellerBACAmount", "Q032": "listingBrokerBAC", "Q033": "listingAgreementStatus", "Q035": "streetAddress", "Q036": "listPrice", "Q037": "listingStartDate", "Q038": "totalCommission", "Q039": "photoDate", "Q040": "liveDate", "Q041": "mandatoryHOA", "Q042": "protectionPeriod", "Q043": "brokerCounty", "Q044": "preferredTitleCompany", "Q045": "surveyOnFile", "Q046": "ossNeeded", "Q047": "nearbySchools", "Q048": "propertyFeatures", "Q049": "listingNotes", "Q051": "streetAddress", "Q052": "listPrice", "Q053": "listingEndDate", "Q054": "preferredTitleCompany", "Q055": "bedroomDimensions", "Q056": "photoDate", "Q057": "liveDate", "Q058": "propertyFeatures", "Q059": "associatedDocs", "Q060": "propertyNotes", "Q062": "authorizationConfirmed",
-  "Q028_type": "leasebackType"
+  "Q028_type": "leasebackType",
+  "Q028_info": "leasebackAdditionalInfo",
+  "Q028_additional": "leasebackAdditionalInfo"
 };
 
 function norm(v) { return String(v || '').toLowerCase().replace(/[–—-]/g,' ').replace(/\s+/g,' ').trim(); }
@@ -708,6 +708,25 @@ document.addEventListener('DOMContentLoaded', function() {
   const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbytZaO0ar50PrqgK8TDY0UVH5nQZrC2VvsLnN7uWRapxMlBpEQNpFwuPRsVgE7fHDbeVw/exec';
 
   function collectData(form) {
+    // capture leaseback fields straight from DOM
+    (function(){
+      var lt = document.querySelector('input[name="leasebackType"]:checked');
+      if (lt) {
+        data.leasebackType = lt.value;
+        if (!data.Q028_type) data.Q028_type = lt.value;
+        var hid = document.getElementById('Q028_type');
+        if (hid) hid.value = lt.value;
+      }
+      var add = document.querySelector('[name="leasebackAdditionalInfo"], #leasebackAdditionalInfo');
+      if (add && add.value) {
+        data.leasebackAdditionalInfo = add.value;
+        // store inside propertyNotes so it persists in the sheet
+        var existing = data.propertyNotes || data.listingNotes || '';
+        var stamp = 'Leaseback notes: ' + add.value;
+        data.propertyNotes = existing ? (existing + '\n\n' + stamp) : stamp;
+      }
+    })();
+
     const fd = new FormData();
     const data = {};
     form.querySelectorAll('input, select, textarea').forEach(el => {
@@ -726,17 +745,7 @@ document.addEventListener('DOMContentLoaded', function() {
     form.querySelectorAll('input[type="file"]').forEach(inp => {
       for (let i=0;i<inp.files.length;i++) fd.append(inp.name || 'file', inp.files[i]);
     });
-    
-    // normalize and mirror for reporting
-    if (data.leasebackType && !data.Q028_type) data.Q028_type = data.leasebackType;
-
-    // merge leaseback additional info into propertyNotes so it is stored without Apps Script changes
-    if (data.leasebackAdditionalInfo) {
-      var existing = data.propertyNotes || data.listingNotes || '';
-      var stamp = 'Leaseback notes: ' + data.leasebackAdditionalInfo;
-      data.propertyNotes = existing ? (existing + '\n\n' + stamp) : stamp;
-    }
-fd.append('data', JSON.stringify(data));
+    fd.append('data', JSON.stringify(data));
     return fd;
   }
 
@@ -1211,67 +1220,33 @@ document.addEventListener('DOMContentLoaded', toggleLeasebackDetails);
 </script>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  try {
-    // Ensure mapping exists at runtime too
-    window.Q_TO_FIELD = window.Q_TO_FIELD || {};
-    if (!('Q028_type' in Q_TO_FIELD)) Q_TO_FIELD['Q028_type'] = 'leasebackType';
-
-    // Normalize any legacy Leaseback Type radios to the correct name
-    document.querySelectorAll('input[name="Q028_type"], input[name="leaseback_type"], input[name="Leaseback_Type"]').forEach(function(el){
-      el.setAttribute('name', 'leasebackType');
-    });
-
-    function updateLeasebackUI() {
-      var yes = document.querySelector('input[name="leaseback"][value="Yes"]');
-      var container = document.getElementById('leasebackTypeContainer');
-      var show = !!(yes && yes.checked);
-      if (container) container.style.display = show ? 'block' : 'none';
-      document.querySelectorAll('input[name="leasebackType"]').forEach(function(r){
-        r.required = show;
-        if (!show) r.checked = false;
-      });
-    }
-
-    document.querySelectorAll('input[name="leaseback"]').forEach(function(r){
-      r.addEventListener('change', updateLeasebackUI);
-      r.addEventListener('input', updateLeasebackUI);
-    });
-
-    // Initial state
-    updateLeasebackUI();
-  } catch (e) {
-    console && console.warn && console.warn('Leaseback init error:', e);
-  }
-});
-</script>
-
+<input type="hidden" name="Q028_type" id="Q028_type">
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  function mirrorLeasebackType() {
-    var checked = document.querySelector('input[name="leasebackType"]:checked');
-    var hidden = document.getElementById('Q028_type');
-    if (hidden) hidden.value = checked ? checked.value : '';
-  }
-  document.querySelectorAll('input[name="leasebackType"]').forEach(function(r){
-    r.addEventListener('change', mirrorLeasebackType);
-    r.addEventListener('input', mirrorLeasebackType);
-  });
-  // also clear when Leaseback is No
-  document.querySelectorAll('input[name="leaseback"]').forEach(function(r){
-    r.addEventListener('change', function(){
-      var yes = document.querySelector('input[name="leaseback"][value="Yes"]');
+document.addEventListener('DOMContentLoaded', function(){
+  function updateLeasebackUIAll() {
+    var yes = document.querySelector('input[name="leaseback"][value="Yes"]');
+    var show = !!(yes && yes.checked);
+    var typeBox = document.getElementById('leasebackTypeContainer');
+    if (typeBox) typeBox.style.display = show ? 'block' : 'none';
+    var addBox = document.getElementById('leasebackAdditionalInfoContainer');
+    if (addBox) addBox.style.display = show ? 'block' : 'none';
+    document.querySelectorAll('input[name="leasebackType"]').forEach(function(r){
+      r.required = show;
+      if (!show) r.checked = false;
+    });
+    if (!show) {
       var hidden = document.getElementById('Q028_type');
-      if (!yes || !yes.checked) {
-        if (hidden) hidden.value = '';
-      } else {
-        mirrorLeasebackType();
-      }
-    });
+      if (hidden) hidden.value = '';
+      var add = document.querySelector('[name="leasebackAdditionalInfo"]');
+      if (add) add.value = '';
+    }
+  }
+  document.querySelectorAll('input[name="leaseback"]').forEach(function(r){
+    r.addEventListener('change', updateLeasebackUIAll);
+    r.addEventListener('input', updateLeasebackUIAll);
   });
-  mirrorLeasebackType();
+  updateLeasebackUIAll();
 });
 </script>
 
