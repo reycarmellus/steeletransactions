@@ -494,6 +494,8 @@
 <button class="btn" type="submit">Submit</button>
 <span class="note" id="status"></span>
 </div>
+  <input type="hidden" name="Q028a" id="Q028a_hidden"/>
+  <input type="hidden" name="Q028b" id="Q028b_hidden"/>
 </form>
 <script>
 const BRANCH = {
@@ -1272,5 +1274,23 @@ document.addEventListener('DOMContentLoaded', toggleLeasebackDetails);
 })();
 </script>
 
+<script>
+
+// Mirror leasebackType and leasebackAdditionalInfo into Q028a and Q028b for compatibility
+document.addEventListener('DOMContentLoaded', function() {
+  const lt = document.querySelector('[name="leasebackType"]');
+  const lai = document.querySelector('[name="leasebackAdditionalInfo"]');
+  const q028a = document.getElementById('Q028a_hidden');
+  const q028b = document.getElementById('Q028b_hidden');
+  function sync() {
+    if (q028a && lt) q028a.value = lt.value || '';
+    if (q028b && lai) q028b.value = lai.value || '';
+  }
+  if (lt) lt.addEventListener('change', sync);
+  if (lai) lai.addEventListener('input', sync);
+  sync();
+});
+
+</script>
 </body>
 </html>
