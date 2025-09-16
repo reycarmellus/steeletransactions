@@ -269,7 +269,11 @@
 <label for="leasebackDetails">If yes, provide details below:</label>
 <textarea id="leasebackDetails" name="leasebackDetails" placeholder="e.g. Seller to lease back for 30 days post-closing at $X/day" rows="4"></textarea>
 </div>-->
-<div id="leasebackTypeContainer" style="display:none; margin-top:8px;"><label>Leaseback Type:</label><br/><label><input name="leasebackType" type="radio" value="Buyers Temp Lease"/> Buyers Temp Lease</label><br/><label><input name="leasebackType" type="radio" value="Sellers Temp Lease"/> Sellers Temp Lease</label></div><div id="leasebackAdditionalInfoContainer" style="display:none; margin-top:8px;"><label for="leasebackAdditionalInfo">Leaseback - Additional Information:</label><textarea id="leasebackAdditionalInfo" name="leasebackAdditionalInfo" placeholder="Any extra notes about the leaseback" rows="3"></textarea></div>
+<section id="S016" data-section-id="S016" style="display:none; margin-top:12px;">
+  <!--<h4>Leaseback Information</h4>-->
+<div class="question" data-qid="Q028a" id="leasebackTypeContainer" style="display:none; margin-top:8px;"><label>Leaseback Type:</label><br/><label><input name="leasebackType" type="radio" value="Buyers Temp Lease"/> Buyers Temp Lease</label><br/><label><input name="leasebackType" type="radio" value="Sellers Temp Lease"/> Sellers Temp Lease</label></div><div class="question" data-qid="Q028b" id="leasebackAdditionalInfoContainer" style="display:none; margin-top:8px;"><label for="leasebackAdditionalInfo">Leaseback - Additional Information:</label><textarea id="leasebackAdditionalInfo" name="leasebackAdditionalInfo" placeholder="Any extra notes about the leaseback" rows="3"></textarea></div>
+</section>
+
 </fieldset>
 </div>
 <div class="question" data-qid="Q029"><label for="sellerConcessions">Any Seller Concessions?</label>
@@ -480,7 +484,7 @@
 </div>
 <div class="question" data-qid="Q061"><label for="associatedDocuments">Any Associated Documents:</label>
 <input id="associatedDocuments" multiple="" name="associatedDocuments[]" required="" type="file"/></div>
-<div class="question" data-qid="Q062"><fieldset>
+<div class="question" data-qid="Q060"><fieldset>
 <legend>
     By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of preparing an offer.  
     <br/>
@@ -605,7 +609,7 @@ const BRANCH = {
     }
   }
 };
-const Q_TO_FIELD = {"Q001": "serviceSelection", "Q002": "requestorName", "Q003": "requestorEmail", "Q004": "buyersRep", "Q006": "buyersRepStart", "Q007": "buyersAgentCommission", "Q008": "remarks", "Q009": "streetAddress", "Q010": "financingType", "Q011": "downPayment", "Q012": "interestCap", "Q013": "loanTerm", "Q014": "financingApprovalDays", "Q015": "salesPrice", "Q016": "titleCompany", "Q017": "earnestMoney", "Q018": "titlePolicyPayer", "Q019": "surveyResponsibility", "Q020": "titlePolicyObjections", "Q021": "hoaStatus", "Q022": "hoaInfoDays", "Q023": "buyerFees", "Q024": "infoPayer", "Q025": "buyerCondition", "Q026": "homeWarrantyAmount", "Q027": "closingDate", "Q028": "leaseback", "Q029": "sellerConcessions", "Q030": "sellerPaysBAC", "Q031": "sellerBACAmount", "Q032": "listingBrokerBAC", "Q033": "listingAgreementStatus", "Q035": "streetAddress", "Q036": "listPrice", "Q037": "listingStartDate", "Q038": "totalCommission", "Q039": "photoDate", "Q040": "liveDate", "Q041": "mandatoryHOA", "Q042": "protectionPeriod", "Q043": "brokerCounty", "Q044": "preferredTitleCompany", "Q045": "surveyOnFile", "Q046": "ossNeeded", "Q047": "nearbySchools", "Q048": "propertyFeatures", "Q049": "listingNotes", "Q051": "streetAddress", "Q052": "listPrice", "Q053": "listingEndDate", "Q054": "preferredTitleCompany", "Q055": "bedroomDimensions", "Q056": "photoDate", "Q057": "liveDate", "Q058": "propertyFeatures", "Q059": "associatedDocs", "Q060": "propertyNotes", "Q062": "authorizationConfirmed"};
+const Q_TO_FIELD = {"Q001": "serviceSelection", "Q002": "requestorName", "Q003": "requestorEmail", "Q004": "buyersRep", "Q006": "buyersRepStart", "Q007": "buyersAgentCommission", "Q008": "remarks", "Q009": "streetAddress", "Q010": "financingType", "Q011": "downPayment", "Q012": "interestCap", "Q013": "loanTerm", "Q014": "financingApprovalDays", "Q015": "salesPrice", "Q016": "titleCompany", "Q017": "earnestMoney", "Q018": "titlePolicyPayer", "Q019": "surveyResponsibility", "Q020": "titlePolicyObjections", "Q021": "hoaStatus", "Q022": "hoaInfoDays", "Q023": "buyerFees", "Q024": "infoPayer", "Q025": "buyerCondition", "Q026": "homeWarrantyAmount", "Q027": "closingDate", "Q028": "leaseback", "Q028a": "leasebackType", "Q028b": "leasebackAdditionalInfo", "Q029": "sellerConcessions", "Q030": "sellerPaysBAC", "Q031": "sellerBACAmount", "Q032": "listingBrokerBAC", "Q033": "listingAgreementStatus", "Q035": "streetAddress", "Q036": "listPrice", "Q037": "listingStartDate", "Q038": "totalCommission", "Q039": "photoDate", "Q040": "liveDate", "Q041": "mandatoryHOA", "Q042": "protectionPeriod", "Q043": "brokerCounty", "Q044": "preferredTitleCompany", "Q045": "surveyOnFile", "Q046": "ossNeeded", "Q047": "nearbySchools", "Q048": "propertyFeatures", "Q049": "listingNotes", "Q051": "streetAddress", "Q052": "listPrice", "Q053": "listingEndDate", "Q054": "preferredTitleCompany", "Q055": "bedroomDimensions", "Q056": "photoDate", "Q057": "liveDate", "Q058": "propertyFeatures", "Q059": "associatedDocs", "Q060": "authorizationConfirmed", "Q062": "propertyNotes"};
 
 function norm(v) { return String(v || '').toLowerCase().replace(/[–—-]/g,' ').replace(/\s+/g,' ').trim(); }
 
@@ -792,6 +796,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function collectPlainData(formEl) {
+    const SCALAR_FIELDS = new Set(['streetAddress','city','state','zipCode','salesPrice','listPrice','listingEndDate','photoDate','liveDate','buyersRepStart','buyersRepEnd','listingStartDate','titleCompany','mandatoryHOA','brokerCounty','preferredTitleCompany']);
     const out = {};
     const fd = new FormData(formEl);
     for (const [k, v] of fd.entries()) {
@@ -807,7 +812,18 @@ document.addEventListener('DOMContentLoaded', function () {
         out[k] = v;
       }
     }
-    return out;
+      for (const k of Object.keys(out)) {
+    if (SCALAR_FIELDS.has(k)) {
+      if (Array.isArray(out[k])) {
+        const firstNonEmpty = out[k].find(v => String(v).trim() !== '');
+        out[k] = firstNonEmpty !== undefined ? firstNonEmpty : '';
+      }
+      if (k === 'state') {
+        out[k] = String(out[k]).split(',').map(s => s.trim()).filter(Boolean)[0] || '';
+      }
+    }
+  }
+  return out;
   }
 
   async function collectAttachments(formEl) {
@@ -844,6 +860,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     try {
       const data = collectPlainData(form);
+      const reqName = (data.requestorName || '').trim();
+      const reqEmail = (data.requestorEmail || '').trim();
+      const policy = (data.authorizationConfirmed || '').trim();
+      if (!reqName || !reqEmail) {
+        status.textContent = 'Please complete Agent Name and Agent Email Address.';
+        return;
+      }
+      if (policy !== 'Yes') {
+        status.textContent = 'Please confirm Privacy Policy as Yes to submit.';
+        return;
+      }
       const attachments = await collectAttachments(form);
 
       const res = await fetch(GAS_ENDPOINT, {
@@ -1091,10 +1118,18 @@ document.addEventListener('DOMContentLoaded', function () {
 function toggleLeasebackDetails() {
   const yes = document.querySelector('input[name="leaseback"][value="Yes"]');
   const typeBox = document.getElementById('leasebackTypeContainer');
+  const addiBox = document.getElementById('leasebackAdditionalInfoContainer');
+  const leasebackSection = document.getElementById('S016');
   const detailsBox = document.getElementById('leasebackDetailsContainer');
   const addlBox = document.getElementById('leasebackAdditionalInfoContainer');
   const show = yes && yes.checked;
+  if (leasebackSection) leasebackSection.style.display = show ? 'block' : 'none';
   if (typeBox) typeBox.style.display = show ? 'block' : 'none';
+  if (addiBox) addiBox.style.display = show ? 'block' : 'none';
+  if (typeBox) {
+    const radios = document.querySelectorAll('input[name="leasebackType"]');
+    radios.forEach(r => r.required = show);
+  }
   if (detailsBox) detailsBox.style.display = show ? 'block' : 'none';
   if (addlBox) addlBox.style.display = show ? 'block' : 'none';
   if (!show) {
@@ -1145,7 +1180,7 @@ document.addEventListener('DOMContentLoaded', toggleLeasebackDetails);
   function updatePolicyAndQ060(){
     try{
       const svc = getAns('serviceSelection'); // Q001
-      const legend = document.querySelector('[data-qid="Q062"] legend');
+      const legend = document.querySelector('[data-qid="Q060"] legend');
       const linkHtml = 'Our <a href="https://steeletransactions.com/wp-content/uploads/2023/05/Steele-Transactions-Privacy-Policy-1.pdf" target="_blank">Privacy Policy</a> can be accessed here.';
 
       if (legend) {
