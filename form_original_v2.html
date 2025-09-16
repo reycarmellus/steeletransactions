@@ -269,7 +269,9 @@
 <label for="leasebackDetails">If yes, provide details below:</label>
 <textarea id="leasebackDetails" name="leasebackDetails" placeholder="e.g. Seller to lease back for 30 days post-closing at $X/day" rows="4"></textarea>
 </div>-->
-<div id="leasebackTypeContainer" style="display:none; margin-top:8px;"><label>Leaseback Type:</label><br/><label><input name="leasebackType" type="radio" value="Buyers Temp Lease"/> Buyers Temp Lease</label><br/><label><input name="leasebackType" type="radio" value="Sellers Temp Lease"/> Sellers Temp Lease</label></div><div id="leasebackAdditionalInfoContainer" style="display:none; margin-top:8px;"><label for="leasebackAdditionalInfo">Leaseback - Additional Information:</label><textarea id="leasebackAdditionalInfo" name="leasebackAdditionalInfo" placeholder="Any extra notes about the leaseback" rows="3"></textarea></div>
+<div id="leasebackTypeContainer" style="display:none; margin-top:8px;"><label>Leaseback Type:</label><br/><label><input name="leasebackType" type="radio" value="Buyers Temp Lease"/> Buyers Temp Lease</label><br/><label><input name="leasebackType" type="radio" value="Sellers Temp Lease"/> Sellers Temp Lease</label>
+<input type="hidden" name="Q028_type" id="Q028_type" />
+</div><div id="leasebackAdditionalInfoContainer" style="display:none; margin-top:8px;"><label for="leasebackAdditionalInfo">Leaseback - Additional Information:</label><textarea id="leasebackAdditionalInfo" name="leasebackAdditionalInfo" placeholder="Any extra notes about the leaseback" rows="3"></textarea></div>
 </fieldset>
 </div>
 <div class="question" data-qid="Q029"><label for="sellerConcessions">Any Seller Concessions?</label>
@@ -724,7 +726,17 @@ document.addEventListener('DOMContentLoaded', function() {
     form.querySelectorAll('input[type="file"]').forEach(inp => {
       for (let i=0;i<inp.files.length;i++) fd.append(inp.name || 'file', inp.files[i]);
     });
-    fd.append('data', JSON.stringify(data));
+    
+    // normalize and mirror for reporting
+    if (data.leasebackType && !data.Q028_type) data.Q028_type = data.leasebackType;
+
+    // merge leaseback additional info into propertyNotes so it is stored without Apps Script changes
+    if (data.leasebackAdditionalInfo) {
+      var existing = data.propertyNotes || data.listingNotes || '';
+      var stamp = 'Leaseback notes: ' + data.leasebackAdditionalInfo;
+      data.propertyNotes = existing ? (existing + '\n\n' + stamp) : stamp;
+    }
+fd.append('data', JSON.stringify(data));
     return fd;
   }
 
@@ -1232,6 +1244,34 @@ document.addEventListener('DOMContentLoaded', function() {
   } catch (e) {
     console && console.warn && console.warn('Leaseback init error:', e);
   }
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  function mirrorLeasebackType() {
+    var checked = document.querySelector('input[name="leasebackType"]:checked');
+    var hidden = document.getElementById('Q028_type');
+    if (hidden) hidden.value = checked ? checked.value : '';
+  }
+  document.querySelectorAll('input[name="leasebackType"]').forEach(function(r){
+    r.addEventListener('change', mirrorLeasebackType);
+    r.addEventListener('input', mirrorLeasebackType);
+  });
+  // also clear when Leaseback is No
+  document.querySelectorAll('input[name="leaseback"]').forEach(function(r){
+    r.addEventListener('change', function(){
+      var yes = document.querySelector('input[name="leaseback"][value="Yes"]');
+      var hidden = document.getElementById('Q028_type');
+      if (!yes || !yes.checked) {
+        if (hidden) hidden.value = '';
+      } else {
+        mirrorLeasebackType();
+      }
+    });
+  });
+  mirrorLeasebackType();
 });
 </script>
 
