@@ -269,7 +269,7 @@
 <label for="leasebackDetails">If yes, provide details below:</label>
 <textarea id="leasebackDetails" name="leasebackDetails" placeholder="e.g. Seller to lease back for 30 days post-closing at $X/day" rows="4"></textarea>
 </div>-->
-<div id="leasebackTypeContainer" style="display:none; margin-top:8px;"><label>Leaseback Type:</label><br/><label><input name="leasebackType" type="radio" value="Buyers Temp Lease"/> Buyers Temp Lease</label><br/><label><input name="leasebackType" type="radio" value="Sellers Temp Lease"/> Sellers Temp Lease</label></div><div id="leasebackAdditionalInfoContainer" style="display:none; margin-top:8px;"><label for="leasebackAdditionalInfo">Leaseback - Additional Information:</label><textarea id="leasebackAdditionalInfo" name="leasebackAdditionalInfo" placeholder="Any extra notes about the leaseback" rows="3"></textarea></div>
+<div id="leasebackTypeContainer" data-qid="Q028a" style="display:none; margin-top:8px;"><label>Leaseback Type:</label><br/><label><input name="leasebackType" type="radio" value="Buyers Temp Lease"/> Buyers Temp Lease</label><br/><label><input name="leasebackType" type="radio" value="Sellers Temp Lease"/> Sellers Temp Lease</label></div><div id="leasebackAdditionalInfoContainer" data-qid="Q028b" style="display:none; margin-top:8px;"><label for="leasebackAdditionalInfo">Leaseback - Additional Information:</label><textarea id="leasebackAdditionalInfo" name="leasebackAdditionalInfo" placeholder="Any extra notes about the leaseback" rows="3"></textarea></div>
 </fieldset>
 </div>
 <div class="question" data-qid="Q029"><label for="sellerConcessions">Any Seller Concessions?</label>
@@ -605,11 +605,7 @@ const BRANCH = {
     }
   }
 };
-const Q_TO_FIELD = {"Q001": "serviceSelection", "Q002": "requestorName", "Q003": "requestorEmail", "Q004": "buyersRep", "Q006": "buyersRepStart", "Q007": "buyersAgentCommission", "Q008": "remarks", "Q009": "streetAddress", "Q010": "financingType", "Q011": "downPayment", "Q012": "interestCap", "Q013": "loanTerm", "Q014": "financingApprovalDays", "Q015": "salesPrice", "Q016": "titleCompany", "Q017": "earnestMoney", "Q018": "titlePolicyPayer", "Q019": "surveyResponsibility", "Q020": "titlePolicyObjections", "Q021": "hoaStatus", "Q022": "hoaInfoDays", "Q023": "buyerFees", "Q024": "infoPayer", "Q025": "buyerCondition", "Q026": "homeWarrantyAmount", "Q027": "closingDate", "Q028": "leaseback", "Q029": "sellerConcessions", "Q030": "sellerPaysBAC", "Q031": "sellerBACAmount", "Q032": "listingBrokerBAC", "Q033": "listingAgreementStatus", "Q035": "streetAddress", "Q036": "listPrice", "Q037": "listingStartDate", "Q038": "totalCommission", "Q039": "photoDate", "Q040": "liveDate", "Q041": "mandatoryHOA", "Q042": "protectionPeriod", "Q043": "brokerCounty", "Q044": "preferredTitleCompany", "Q045": "surveyOnFile", "Q046": "ossNeeded", "Q047": "nearbySchools", "Q048": "propertyFeatures", "Q049": "listingNotes", "Q051": "streetAddress", "Q052": "listPrice", "Q053": "listingEndDate", "Q054": "preferredTitleCompany", "Q055": "bedroomDimensions", "Q056": "photoDate", "Q057": "liveDate", "Q058": "propertyFeatures", "Q059": "associatedDocs", "Q060": "propertyNotes", "Q062": "authorizationConfirmed",
-  "Q028_type": "leasebackType",
-  "Q028_info": "leasebackAdditionalInfo",
-  "Q028_additional": "leasebackAdditionalInfo"
-};
+const Q_TO_FIELD = {"Q001": "serviceSelection", "Q002": "requestorName", "Q003": "requestorEmail", "Q004": "buyersRep", "Q006": "buyersRepStart", "Q007": "buyersAgentCommission", "Q008": "remarks", "Q009": "streetAddress", "Q010": "financingType", "Q011": "downPayment", "Q012": "interestCap", "Q013": "loanTerm", "Q014": "financingApprovalDays", "Q015": "salesPrice", "Q016": "titleCompany", "Q017": "earnestMoney", "Q018": "titlePolicyPayer", "Q019": "surveyResponsibility", "Q020": "titlePolicyObjections", "Q021": "hoaStatus", "Q022": "hoaInfoDays", "Q023": "buyerFees", "Q024": "infoPayer", "Q025": "buyerCondition", "Q026": "homeWarrantyAmount", "Q027": "closingDate", "Q028": "leaseback", "Q029": "sellerConcessions", "Q030": "sellerPaysBAC", "Q031": "sellerBACAmount", "Q032": "listingBrokerBAC", "Q033": "listingAgreementStatus", "Q035": "streetAddress", "Q036": "listPrice", "Q037": "listingStartDate", "Q038": "totalCommission", "Q039": "photoDate", "Q040": "liveDate", "Q041": "mandatoryHOA", "Q042": "protectionPeriod", "Q043": "brokerCounty", "Q044": "preferredTitleCompany", "Q045": "surveyOnFile", "Q046": "ossNeeded", "Q047": "nearbySchools", "Q048": "propertyFeatures", "Q049": "listingNotes", "Q051": "streetAddress", "Q052": "listPrice", "Q053": "listingEndDate", "Q054": "preferredTitleCompany", "Q055": "bedroomDimensions", "Q056": "photoDate", "Q057": "liveDate", "Q058": "propertyFeatures", "Q059": "associatedDocs", "Q060": "propertyNotes", "Q062": "authorizationConfirmed", "Q028a": "leasebackType","Q028b": "leasebackAdditionalInfo", };
 
 function norm(v) { return String(v || '').toLowerCase().replace(/[–—-]/g,' ').replace(/\s+/g,' ').trim(); }
 
@@ -708,25 +704,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbytZaO0ar50PrqgK8TDY0UVH5nQZrC2VvsLnN7uWRapxMlBpEQNpFwuPRsVgE7fHDbeVw/exec';
 
   function collectData(form) {
-    // capture leaseback fields straight from DOM
-    (function(){
-      var lt = document.querySelector('input[name="leasebackType"]:checked');
-      if (lt) {
-        data.leasebackType = lt.value;
-        if (!data.Q028_type) data.Q028_type = lt.value;
-        var hid = document.getElementById('Q028_type');
-        if (hid) hid.value = lt.value;
-      }
-      var add = document.querySelector('[name="leasebackAdditionalInfo"], #leasebackAdditionalInfo');
-      if (add && add.value) {
-        data.leasebackAdditionalInfo = add.value;
-        // store inside propertyNotes so it persists in the sheet
-        var existing = data.propertyNotes || data.listingNotes || '';
-        var stamp = 'Leaseback notes: ' + add.value;
-        data.propertyNotes = existing ? (existing + '\n\n' + stamp) : stamp;
-      }
-    })();
-
     const fd = new FormData();
     const data = {};
     form.querySelectorAll('input, select, textarea').forEach(el => {
@@ -814,24 +791,76 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  function collectPlainData(formEl) {
+    function collectPlainData(formEl) {
     const out = {};
-    const fd = new FormData(formEl);
-    for (const [k, v] of fd.entries()) {
-      if (v instanceof File) continue;
-      if (k.endsWith('[]')) {
-        const key = k.slice(0, -2);
-        if (!Array.isArray(out[key])) out[key] = [];
-        out[key].push(v);
-      } else if (out[k] !== undefined) {
-        if (!Array.isArray(out[k])) out[k] = [out[k]];
-        out[k].push(v);
+    const els = Array.from(formEl.querySelectorAll('input, select, textarea'))
+      .filter(el => el.type !== 'file');
+
+    // group inputs by name
+    const byName = {};
+    for (const el of els) {
+      if (!el.name) continue;
+      if (!byName[el.name]) byName[el.name] = [];
+      byName[el.name].push(el);
+    }
+
+    for (const [name, arr] of Object.entries(byName)) {
+      // Arrays with [] keep as arrays
+      const isArrayField = name.endsWith('[]');
+      const baseName = isArrayField ? name.slice(0, -2) : name;
+
+      // Radios
+      if (arr[0].type === 'radio') {
+        const checked = arr.find(el => el.checked);
+        if (checked) out[baseName] = checked.value || '';
+        continue;
+      }
+
+      // Checkboxes without [] collate as comma joined string
+      if (arr[0].type === 'checkbox') {
+        const vals = arr.filter(el => el.checked).map(el => el.value);
+        if (isArrayField) {
+          if (vals.length) out[baseName] = vals;
+        } else {
+          out[baseName] = vals.join(','); // intentional commas for multi select
+        }
+        continue;
+      }
+
+      // Text-like and selects
+      const values = arr.map(el => el.value).filter(v => v != null);
+      if (isArrayField) {
+        const clean = values.filter(v => String(v).trim() !== '');
+        if (clean.length) out[baseName] = clean;
       } else {
-        out[k] = v;
+        // keep last non empty value to avoid "TX, TX, TX" and similar
+        let last = '';
+        for (const v of values) {
+          if (String(v).trim() !== '') last = v;
+        }
+        out[baseName] = last;
       }
     }
+
     return out;
   }
+  
+  async function collectAttachments(formEl) {
+    const list = [];
+    const inputs = formEl.querySelectorAll('input[type="file"]');
+    for (const input of inputs) {
+      if (!input.files || !input.files.length) continue;
+      for (const f of input.files) {
+        list.push({
+          fileName: f.name,
+          mimeType: f.type || 'application/octet-stream',
+          fileData: await fileToBase64(f)
+        });
+      }
+    }
+    return list;
+  }
+    
 
   async function collectAttachments(formEl) {
     const list = [];
@@ -866,6 +895,30 @@ document.addEventListener('DOMContentLoaded', function () {
     status.textContent = 'Sending';
 
     try {
+    // Required field checks
+    const reqName = document.getElementById('requestorName');
+    const reqEmail = document.getElementById('requestorEmail');
+    const privacyYes = document.querySelector('input[name="authorizationConfirmed"]:checked');
+
+    function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||'')); }
+
+    if (!reqName || String(reqName.value).trim() === '') {
+      status.textContent = 'Please enter your name';
+      reqName && reqName.focus();
+      return;
+    }
+    if (!reqEmail || String(reqEmail.value).trim() === '' || !isValidEmail(reqEmail.value)) {
+      status.textContent = 'Please enter a valid email';
+      reqEmail && reqEmail.focus();
+      return;
+    }
+    if (!privacyYes) {
+      status.textContent = 'Please confirm the Privacy Policy';
+      const q = document.querySelector('[data-qid="Q062"]');
+      if (q) q.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    
       const data = collectPlainData(form);
       const attachments = await collectAttachments(form);
 
@@ -1217,37 +1270,6 @@ document.addEventListener('DOMContentLoaded', toggleLeasebackDetails);
     else { hideS013IfNeeded(); updatePolicyAndQ060(); }
   });
 })();
-</script>
-
-
-<input type="hidden" name="Q028_type" id="Q028_type">
-
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  function updateLeasebackUIAll() {
-    var yes = document.querySelector('input[name="leaseback"][value="Yes"]');
-    var show = !!(yes && yes.checked);
-    var typeBox = document.getElementById('leasebackTypeContainer');
-    if (typeBox) typeBox.style.display = show ? 'block' : 'none';
-    var addBox = document.getElementById('leasebackAdditionalInfoContainer');
-    if (addBox) addBox.style.display = show ? 'block' : 'none';
-    document.querySelectorAll('input[name="leasebackType"]').forEach(function(r){
-      r.required = show;
-      if (!show) r.checked = false;
-    });
-    if (!show) {
-      var hidden = document.getElementById('Q028_type');
-      if (hidden) hidden.value = '';
-      var add = document.querySelector('[name="leasebackAdditionalInfo"]');
-      if (add) add.value = '';
-    }
-  }
-  document.querySelectorAll('input[name="leaseback"]').forEach(function(r){
-    r.addEventListener('change', updateLeasebackUIAll);
-    r.addEventListener('input', updateLeasebackUIAll);
-  });
-  updateLeasebackUIAll();
-});
 </script>
 
 </body>
