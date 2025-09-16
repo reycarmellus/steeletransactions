@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Client BI Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --accent: #60a5fa;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --pill: #1f2937;
+      --border: #1f2937;
+    }
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    .container { max-width: 1200px; margin: 24px auto 80px; padding: 0 16px; }
+    .grid { display: grid; gap: 16px; }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card { background: var(--card); border:1px solid var(--border); border-radius: 16px; padding: 16px; }
+    .kpi-label { font-size: 12px; color: var(--muted); }
+    .kpi-value { font-size: 28px; font-weight: 700; }
+    .kpi-sub { font-size: 12px; color: var(--muted); }
+    .row { display: flex; align-items: center; gap: 8px; }
+    .pill { background: var(--pill); border:1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 999px; font-size: 12px; }
+    select, input[type="text"], input[type="date"], textarea {
+      background: var(--pill);
+      border:1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 10px 12px;
+      width: 100%;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 12px; border-bottom:1px solid var(--border); vertical-align: top; }
+    th { text-align: left; color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    tr:hover td { background: rgba(255,255,255,.03); }
+    .btn { cursor: pointer; border:1px solid var(--border); background: var(--pill); color: var(--text); padding: 10px 12px; border-radius: 10px; }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #0b1220; font-weight: 700; }
+    .detail { white-space: normal; }
+    .muted { color: var(--muted); }
+    .overflow { overflow: auto; }
+    .status-dot { width: 8px; height: 8px; display: inline-block; border-radius: 99px; margin-right: 6px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-grid .full { grid-column: span 2; }
+    label { display:block; font-size:12px; color: var(--muted); margin-bottom:6px; }
+    .readonly { opacity:.7; pointer-events: none; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <h1 style="font-size:28px; margin:0 0 12px;">Client BI Dashboard</h1>
+  <div class="muted" style="margin-bottom:20px">Live view of Google Sheet data with write back for all fields. Week on week chart uses Sunday as week start.</div>
+
+  <!-- Top KPIs without Last 7 Days card -->
+  <div class="grid grid-3">
+    <div class="card">
+      <div class="kpi-label">Total Requests YTD</div>
+      <div class="kpi-value" id="kpi-ytd">0</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">New Offer Writing</div>
+      <div class="kpi-value" id="kpi-offer">0</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">New Listing Preparation</div>
+      <div class="kpi-value" id="kpi-listing">0</div>
+    </div>
+  </div>
+  <div class="grid grid-3" style="margin-top:16px">
+    <div class="card">
+      <div class="kpi-label">New MLS Input Only</div>
+      <div class="kpi-value" id="kpi-mls">0</div>
+    </div>
+    <div class="card" style="grid-column: span 2;">
+      <div class="kpi-label">Week on Week Requests last 12 weeks</div>
+      <canvas id="chartWow"></canvas>
+    </div>
+  </div>
+
+  <!-- Slicers -->
+  <h2 style="font-size:20px; margin: 20px 0 8px;">Slicers</h2>
+  <div class="grid grid-3 card">
+    <div>
+      <div class="kpi-label">Request Type</div>
+      <select id="slicer-type"></select>
+    </div>
+    <div>
+      <div class="kpi-label">Agent Name</div>
+      <select id="slicer-agent"></select>
+    </div>
+    <div>
+      <div class="kpi-label">Address</div>
+      <select id="slicer-address"></select>
+    </div>
+  </div>
+
+  <!-- Data table and details -->
+  <div class="grid grid-2" style="margin-top:16px">
+    <div class="card overflow">
+      <div class="row" style="justify-content: space-between; margin-bottom: 12px;">
+        <input id="search" type="text" placeholder="Search">
+        <div class="row">
+          <button class="btn" id="exportCsv">Export CSV</button>
+          <button class="btn" id="resetFilters">Reset</button>
+        </div>
+      </div>
+      <table id="tbl">
+        <thead>
+          <tr id="thead"></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content: space-between; margin-bottom:8px">
+        <div>
+          <div class="kpi-label">Record Detail</div>
+          <div class="muted" id="detailTitle"></div>
+        </div>
+        <div class="row">
+          <button class="btn primary" id="saveAll">Save Changes</button>
+        </div>
+      </div>
+      <div id="form" class="detail"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/** Setup
+ 1. Create an Apps Script project and deploy backend as before
+ 2. Replace WEB_APP_URL and SECRET below
+*/
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwr4rI68AaPbuwwc6Db2MA7bDlXXnSi1J8csQSWHwElm9ve8jMpWmRIVT9NyQYfWQ0R/exec";
+const SECRET = "ThisIsJustATest";
+
+// Which columns to show in the grid by default
+const GRID_COLUMNS = ["Timestamp","Respondent_ID","Service_Selection","Requestor_Name","Requestor_Email","Street_Address","City","State","Zip_Code","Status"];
+
+// Fallback if value is missing
+function safe(v) { return v == null ? "" : v; }
+const el = id => document.getElementById(id);
+
+let RAW = [];
+let FILTERED = [];
+let HEADERS = [];
+let CURRENT = null; // current row object
+let ORIGINAL = null; // original snapshot for diff
+
+async function fetchData() {
+  const res = await fetch(WEB_APP_URL);
+  const data = await res.json();
+  HEADERS = data.headers;
+  RAW = data.rows;
+  RAW.forEach(r => { if (!("Status" in r)) r["Status"] = "New"; });
+  // Compute AddressFull if missing
+  RAW.forEach(r => {
+    if (!r.AddressFull) {
+      const parts = [r.Street_Address, r.City, r.State].filter(Boolean).join(", ");
+      r.AddressFull = parts + (r.Zip_Code ? " " + r.Zip_Code : "");
+    }
+  });
+  buildSlicers(RAW);
+  renderAll();
+}
+
+function buildSlicers(rows) {
+  const t = el("slicer-type");
+  const a = el("slicer-agent");
+  const addr = el("slicer-address");
+  const unique = (arr) => Array.from(new Set(arr.filter(Boolean))).sort((x,y)=>String(x).localeCompare(String(y)));
+  const types = ["All"].concat(unique(rows.map(r => r.Service_Selection)));
+  const agents = ["All"].concat(unique(rows.map(r => r.Requestor_Name)));
+  const addrs = ["All"].concat(unique(rows.map(r => r.AddressFull)));
+  [t,a,addr].forEach(s => s.innerHTML = "");
+  types.forEach(v => t.append(new Option(v, v)));
+  agents.forEach(v => a.append(new Option(v, v)));
+  addrs.forEach(v => addr.append(new Option(v, v)));
+  [t,a,addr].forEach(s => s.addEventListener("change", renderAll));
+  el("search").addEventListener("input", renderAll);
+  el("resetFilters").addEventListener("click", () => { t.value="All"; a.value="All"; addr.value="All"; el("search").value=""; renderAll(); });
+}
+
+function applyFilters() {
+  const type = el("slicer-type").value;
+  const agent = el("slicer-agent").value;
+  const addr = el("slicer-address").value;
+  const q = el("search").value.toLowerCase().trim();
+
+  FILTERED = RAW.filter(r => {
+    const passType = type === "All" || r.Service_Selection === type;
+    const passAgent = agent === "All" || r.Requestor_Name === agent;
+    const passAddr = addr === "All" || r.AddressFull === addr;
+    const passQ = !q || Object.values(r).some(v => String(v).toLowerCase().includes(q));
+    return passType && passAgent && passAddr && passQ;
+  });
+}
+
+function computeKPIs() {
+  const now = new Date();
+  const startYTD = new Date(now.getFullYear(),0,1);
+  const inYTD = RAW.filter(r => new Date(r.Timestamp) >= startYTD).length;
+  el("kpi-ytd").textContent = inYTD;
+
+  const isNew = r => String(r.Status || "New") === "New";
+  el("kpi-offer").textContent = RAW.filter(r => r.Service_Selection === "Offer Writing" && isNew(r)).length;
+  el("kpi-listing").textContent = RAW.filter(r => r.Service_Selection === "Listing Preparation" && isNew(r)).length;
+  el("kpi-mls").textContent = RAW.filter(r => r.Service_Selection === "MLS Input Only" && isNew(r)).length;
+}
+
+// week starts on Sunday
+function startOfWeekSunday(d) {
+  const date = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const day = date.getDay(); // 0 Sun
+  const diff = day; // days since Sunday
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate() - diff);
+}
+
+function formatWeekLabel(start) {
+  const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6);
+  const fmt = (dt) => `${dt.getMonth()+1}/${dt.getDate()}`;
+  if (start.getFullYear() !== end.getFullYear()) {
+    return `${fmt(start)} ${start.getFullYear()} to ${fmt(end)} ${end.getFullYear()}`;
+  }
+  return `${fmt(start)} to ${fmt(end)} ${end.getFullYear()}`;
+}
+
+function renderWoWChart() {
+  const ctx = el("chartWow");
+  const now = new Date();
+  const currentWeekStart = startOfWeekSunday(now);
+  const weeks = [];
+  for (let i=11; i>=0; i--) {
+    const wStart = new Date(currentWeekStart.getFullYear(), currentWeekStart.getMonth(), currentWeekStart.getDate() - i*7);
+    weeks.push(wStart);
+  }
+  const labels = weeks.map(ws => formatWeekLabel(ws));
+  const counts = weeks.map(ws => {
+    const we = new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() + 7);
+    return RAW.filter(r => {
+      const t = new Date(r.Timestamp);
+      return t >= ws && t < we;
+    }).length;
+  });
+
+  if (window.WOW) window.WOW.destroy();
+  window.WOW = new Chart(ctx, {
+    type: "bar",
+    data: { labels, datasets: [{ label: "Requests", data: counts }] },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { x: { ticks: { color: "#94a3b8", autoSkip: true, maxRotation: 0 } }, y: { ticks: { color: "#94a3b8" } } }
+    }
+  });
+}
+
+function renderTable() {
+  applyFilters();
+  const thead = el("thead");
+  thead.innerHTML = "";
+  GRID_COLUMNS.forEach(c => {
+    const th = document.createElement("th");
+    th.textContent = c;
+    thead.appendChild(th);
+  });
+
+  const tbody = el("tbody");
+  tbody.innerHTML = "";
+  FILTERED.forEach(r => {
+    const tr = document.createElement("tr");
+    tr.style.cursor = "pointer";
+    tr.addEventListener("click", () => showDetail(r));
+    GRID_COLUMNS.forEach(c => {
+      const td = document.createElement("td");
+      if (c === "Status") {
+        const dot = document.createElement("span");
+        dot.className = "status-dot";
+        dot.style.background = r.Status === "New" ? "var(--warn)" : r.Status === "Closed" ? "var(--bad)" : "var(--good)";
+        td.appendChild(dot);
+      }
+      td.appendChild(document.createTextNode(safe(r[c])));
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function inputForColumn(col, value) {
+  // simple input chooser based on common names
+  const lower = col.toLowerCase();
+  const isDate = lower.includes("date") || lower.endsWith("start") || lower.endsWith("end");
+  const isLong = lower.includes("notes") || lower.includes("info") || lower.includes("description") || lower.includes("additional");
+  const readOnlyCols = new Set(["Respondent_ID","AddressFull"]);
+  const readOnly = readOnlyCols.has(col);
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "form-item";
+  const label = document.createElement("label");
+  label.textContent = col;
+  const field = isLong ? document.createElement("textarea") : document.createElement("input");
+  if (!isLong) field.type = isDate ? "date" : "text";
+  field.value = value == null ? "" : String(value);
+  field.id = "f_" + col.replace(/\W+/g,"_");
+  if (readOnly) field.classList.add("readonly");
+  wrapper.appendChild(label);
+  wrapper.appendChild(field);
+  return wrapper;
+}
+
+function buildForm(row) {
+  const form = document.createElement("div");
+  form.className = "form-grid";
+  HEADERS.forEach(col => {
+    const v = row[col];
+    const item = inputForColumn(col, v);
+    // make some fields span full width
+    const lower = col.toLowerCase();
+    if (lower.includes("email") || lower.includes("address") || lower.includes("notes") || lower.includes("info") || lower.includes("description")) {
+      item.classList.add("full");
+    }
+    form.appendChild(item);
+  });
+  return form;
+}
+
+async function autoMarkViewed(row) {
+  if (row.Status !== "Viewed") {
+    await updateRow(row.Respondent_ID, { Status: "Viewed" });
+    row.Status = "Viewed";
+  }
+}
+
+function showDetail(row) {
+  CURRENT = row;
+  ORIGINAL = JSON.parse(JSON.stringify(row)); // deep copy
+  el("detailTitle").textContent = row.Respondent_ID ? "ID " + row.Respondent_ID : row.Requestor_Name || "";
+  const container = el("form");
+  container.innerHTML = "";
+  container.appendChild(buildForm(row));
+  // auto mark as viewed when selected
+  autoMarkViewed(row).then(() => {
+    renderAll(); // refresh indicators
+  });
+}
+
+function getFormValues() {
+  const values = {};
+  HEADERS.forEach(col => {
+    const id = "f_" + col.replace(/\W+/g,"_");
+    const node = document.getElementById(id);
+    if (node) {
+      values[col] = node.value;
+    }
+  });
+  return values;
+}
+
+function computeDiff(oldObj, newObj) {
+  const diff = {};
+  Object.keys(newObj).forEach(k => {
+    const oldVal = oldObj[k] == null ? "" : String(oldObj[k]);
+    const newVal = newObj[k] == null ? "" : String(newObj[k]);
+    if (oldVal !== newVal) {
+      diff[k] = newObj[k];
+    }
+  });
+  return diff;
+}
+
+async function updateRow(respondentId, updates) {
+  const body = {
+    secret: SECRET,
+    action: "update",
+    keyColumn: "Respondent_ID",
+    keyValue: respondentId,
+    updates: updates
+  };
+  const res = await fetch(WEB_APP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  if (!data.ok) alert("Update failed: " + data.error);
+  return data.ok;
+}
+
+async function saveAll() {
+  if (!CURRENT) { alert("Select a row first"); return; }
+  const newVals = getFormValues();
+  const diff = computeDiff(ORIGINAL, newVals);
+  if (Object.keys(diff).length === 0) {
+    alert("No changes to save");
+    return;
+  }
+  const ok = await updateRow(CURRENT.Respondent_ID, diff);
+  if (ok) {
+    // update local row
+    Object.assign(CURRENT, diff);
+    ORIGINAL = JSON.parse(JSON.stringify(CURRENT));
+    renderAll();
+  }
+}
+
+function exportCSV() {
+  const cols = GRID_COLUMNS;
+  const rows = [cols.join(","), ...FILTERED.map(r => cols.map(c => JSON.stringify(safe(r[c])).replace(/^"|"$|\\/g, m => m === '\\\\' ? '\\\\\\\\' : "")).join(","))];
+  const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "filtered.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function renderAll() {
+  computeKPIs();
+  renderWoWChart();
+  renderTable();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("exportCsv").addEventListener("click", exportCSV);
+  document.getElementById("saveAll").addEventListener("click", saveAll);
+  fetchData();
+});
+</script>
+</body>
+</html>
