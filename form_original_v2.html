@@ -823,7 +823,13 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   }
-  return out;
+  
+    const fin = String(out.financingType || '').trim();
+    if (fin && fin !== 'Cash') {
+      if (!Object.prototype.hasOwnProperty.call(out, 'totalSalesPrice')) out.totalSalesPrice = '';
+      if (!Object.prototype.hasOwnProperty.call(out, 'interestCap')) out.interestCap = '';
+    }
+return out;
   }
 
   async function collectAttachments(formEl) {
@@ -1231,7 +1237,6 @@ document.addEventListener('DOMContentLoaded', toggleLeasebackDetails);
 })();
 </script>
 
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   const finSel = document.getElementById('financingType');
@@ -1262,6 +1267,5 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 </script>
-
 </body>
 </html>
