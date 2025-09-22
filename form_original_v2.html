@@ -1231,5 +1231,37 @@ document.addEventListener('DOMContentLoaded', toggleLeasebackDetails);
 })();
 </script>
 
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const finSel = document.getElementById('financingType');
+  const tprice = document.getElementById('totalSalesPrice');
+  const capRadios = document.querySelectorAll('input[name="interestCap"]');
+
+  capRadios.forEach(function(r){ r.required = false; });
+
+  function setEnabled(enabled) {
+    if (tprice) {
+      tprice.disabled = !enabled;
+      if (!enabled) tprice.value = '';
+    }
+    capRadios.forEach(function(r){
+      r.disabled = !enabled;
+      if (!enabled) r.checked = false;
+    });
+  }
+
+  function onChange() {
+    const v = (finSel && finSel.value ? finSel.value : '').trim();
+    setEnabled(v && v !== 'Cash');
+  }
+
+  if (finSel) {
+    finSel.addEventListener('change', onChange);
+    onChange();
+  }
+});
+</script>
+
 </body>
 </html>
