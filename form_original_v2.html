@@ -828,6 +828,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (fin && fin !== 'Cash') {
       if (!Object.prototype.hasOwnProperty.call(out, 'totalSalesPrice')) out.totalSalesPrice = '';
       if (!Object.prototype.hasOwnProperty.call(out, 'interestCap')) out.interestCap = '';
+      // Force-read from DOM in case FormData missed disabled or hidden inputs
+      try {
+        const tEl = document.getElementById('totalSalesPrice');
+        if (tEl && typeof tEl.value !== 'undefined') out.totalSalesPrice = tEl.value || out.totalSalesPrice || '';
+        const sel = document.querySelector('input[name="interestCap"]:checked');
+        if (sel && typeof sel.value !== 'undefined') out.interestCap = sel.value || out.interestCap || '';
+      } catch(e) {}
     }
 return out;
   }
