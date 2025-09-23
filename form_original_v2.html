@@ -318,8 +318,11 @@
 <option value="Yes - but I want to change some information">Yes – but I want to change some information (such as the # of days in Protection Period)</option>
 </select></div>
 <div class="question" data-qid="Q034"><fieldset id="sellersInfo">
-<legend>Please provide your Seller(s) contact information:</legend>
-<p>(If not already in your Zipforms, Docusign, Skyslope…etc)</p>
+<legend>Please provide your Seller(s) contact information:
+  <span style="display:block; font-weight:normal; font-size:0.9em; margin-top:2px;">
+    (If not already in your Zipforms, Docusign, Skyslope…etc)
+  </span></legend>
+<!--<p>(If not already in your Zipforms, Docusign, Skyslope…etc)</p>-->
 <div class="seller-entry">
 <label for="sellerName1">Legal Name:</label>
 <input id="sellerName1" name="sellerName[]" required="" type="text"/>
@@ -452,8 +455,11 @@
 <!--<small>(Required for NETREIS &amp; HAR or type N/A)</small>-->
 </div>
 <div class="question" data-qid="Q055"><fieldset>
-<legend style="font-weight: normal;">Can you provide the Room Dimensions for the Bedrooms, Kitchen, Living Room &amp; Dining Room?</legend>
-<p>(Required for NETREIS &amp; HAR listings or type N/A)</p>
+<legend style="font-weight: normal;">Can you provide the Room Dimensions for the Bedrooms, Kitchen, Living Room &amp; Dining Room?
+  <span style="display:block; font-weight:normal; font-size:0.9em; margin-top:2px;">
+    (Required for NETREIS & HAR listings or type N/A)
+  </span></legend>
+<!--<p>(Required for NETREIS &amp; HAR listings or type N/A)</p>-->
 <label for="bedroomDimensions">Bedrooms:</label>
 <input id="bedroomDimensions" name="bedroomDimensions" placeholder="e.g. 12ft x 14ft or N/A" required="" type="text"/>
 <label for="kitchenDimensions">Kitchen:</label>
@@ -473,13 +479,13 @@
 </div>
 <div class="question" data-qid="Q058"><label for="propertyFeatures">Any property features you want highlighted?</label>
 <textarea id="propertyFeatures" name="propertyFeatures" placeholder="e.g. Newly renovated kitchen, spacious backyard, energy-efficient windows..." rows="4"></textarea></div>
-<div class="question" data-qid="Q059"><label for="associatedDocs">
+<!--<div class="question" data-qid="Q059"><label for="associatedDocs">
   If the property is already listed, I will download a copy of all Associated Docs.<br/>
   Otherwise, please send me a copy of anything that needs to be uploaded:<br/>
 <small>(Survey, Seller’s Disclosure, LBP, Onsite Sewer…etc)</small>
 </label>
 <textarea id="associatedDocs" name="associatedDocs" placeholder="List documents or type N/A if already uploaded" required="" rows="4"></textarea>
-</div>
+</div>-->
 </section>
 <section class="form-section" data-section="S015" data-survey-id="SRV001" id="SRV001_S015" style="display:none">
 <h2>Additional documents and Privacy Policy</h2>
@@ -906,7 +912,7 @@ if (json.success || json.ok) {
   status.style.display = 'none';
 
   // Friendly confirmation
-  showRequestModal('Request Submitted', 'Thank you. We will reach out to you within 48 hours. We appreciate your business.');
+  showRequestModal('Request Submitted', 'Thank you for submitting an intake form! We have received your request!');
 
   // Full reset
   form.reset();
@@ -1203,11 +1209,11 @@ document.addEventListener('DOMContentLoaded', toggleLeasebackDetails);
 
       if (legend) {
         if (norm(svc) === 'listing preparation') {
-          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client\\'s contact information with Steele Transactions for the purpose of preparing a property listing.<br/>" + linkHtml;
+          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of preparing a property listing.<br/>" + linkHtml;
         } else if (norm(svc) === 'mls input only') {
-          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client\\'s contact information with Steele Transactions for the purpose of inputting a listing into the MLS.<br/>" + linkHtml;
+          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of inputting a listing into the MLS.<br/>" + linkHtml;
         } else if (norm(svc) === 'offer writing') {
-          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client\\'s contact information with Steele Transactions for the purpose of preparing an offer.<br/>" + linkHtml;
+          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of preparing an offer.<br/>" + linkHtml;
         }
       }
 
