@@ -1200,8 +1200,11 @@ function updatePolicyAndQ060() {
   try {
     const svc = getAns('serviceSelection'); // Q001
     const legend = document.querySelector('[data-qid="Q060"] legend');
+    const label = document.querySelector('[data-qid="Q060"] label[for="propertyNotes"]');
+    const textarea = document.getElementById('propertyNotes');
     const linkHtml = 'Our <a href="https://steeletransactions.com/wp-content/uploads/2023/05/Steele-Transactions-Privacy-Policy-1.pdf" target="_blank">Privacy Policy</a> can be accessed here.';
 
+    // Update legend text
     if (legend) {
       if (norm(svc) === 'listing preparation') {
         legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of preparing a property listing.<br/>" + linkHtml;
@@ -1212,22 +1215,23 @@ function updatePolicyAndQ060() {
       }
     }
 
-    const q060 = document.getElementById('propertyNotes'); // Q060 input
-    const q060Label = document.querySelector('label[for="propertyNotes"]'); // Q060 label
-
-    if (q060) {
-      if (norm(svc) === 'listing preparation') {
-        q060.setAttribute('placeholder', 'e.g. # of Bed/Baths, Features you want highlighted, etc...');
-      } else if (norm(svc) === 'mls input only') {
-        q060.setAttribute('placeholder', '');
+    // Update label text
+    if (label) {
+      if (norm(svc) === 'offer writing') {
+        label.textContent = 'Notes/Additional Information pertaining to this Offer:';
+      } else {
+        label.textContent = 'Notes/Additional Information pertaining to this Listing:';
       }
     }
 
-    if (q060Label) {
-      if (norm(svc) === 'offer writing') {
-        q060Label.textContent = 'Notes/Additional Information pertaining to this Offer:';
-      } else {
-        q060Label.textContent = 'Notes/Additional Information pertaining to this Listing:';
+    // Update placeholder
+    if (textarea) {
+      if (norm(svc) === 'listing preparation') {
+        textarea.setAttribute('placeholder', 'e.g. # of Bed/Baths, Features you want highlighted, etc...');
+      } else if (norm(svc) === 'mls input only') {
+        textarea.setAttribute('placeholder', '');
+      } else if (norm(svc) === 'offer writing') {
+        textarea.setAttribute('placeholder', 'e.g. Non-Realty Items Addendum, Inspector Information, etc...');
       }
     }
 
@@ -1235,6 +1239,7 @@ function updatePolicyAndQ060() {
     console.error('Error updating Q060:', e);
   }
 }
+
 
 
   // Hook into the existing visibility flow
