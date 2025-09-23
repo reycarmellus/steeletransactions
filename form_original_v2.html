@@ -1196,32 +1196,46 @@ document.addEventListener('DOMContentLoaded', toggleLeasebackDetails);
   }
 
   // 2. Dynamic Privacy Policy text and Q060 placeholder based on Q001
-  function updatePolicyAndQ060(){
-    try{
-      const svc = getAns('serviceSelection'); // Q001
-      const legend = document.querySelector('[data-qid="Q060"] legend');
-      const linkHtml = 'Our <a href="https://steeletransactions.com/wp-content/uploads/2023/05/Steele-Transactions-Privacy-Policy-1.pdf" target="_blank">Privacy Policy</a> can be accessed here.';
+function updatePolicyAndQ060() {
+  try {
+    const svc = getAns('serviceSelection'); // Q001
+    const legend = document.querySelector('[data-qid="Q060"] legend');
+    const linkHtml = 'Our <a href="https://steeletransactions.com/wp-content/uploads/2023/05/Steele-Transactions-Privacy-Policy-1.pdf" target="_blank">Privacy Policy</a> can be accessed here.';
 
-      if (legend) {
-        if (norm(svc) === 'listing preparation') {
-          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of preparing a property listing.<br/>" + linkHtml;
-        } else if (norm(svc) === 'mls input only') {
-          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of inputting a listing into the MLS.<br/>" + linkHtml;
-        } else if (norm(svc) === 'offer writing') {
-          legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of preparing an offer.<br/>" + linkHtml;
-        }
+    if (legend) {
+      if (norm(svc) === 'listing preparation') {
+        legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of preparing a property listing.<br/>" + linkHtml;
+      } else if (norm(svc) === 'mls input only') {
+        legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of inputting a listing into the MLS.<br/>" + linkHtml;
+      } else if (norm(svc) === 'offer writing') {
+        legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of preparing an offer.<br/>" + linkHtml;
       }
+    }
 
-      const q060 = document.getElementById('propertyNotes'); // Q060
-      if (q060) {
-        if (norm(svc) === 'listing preparation') {
-          q060.setAttribute('placeholder','e.g. # of Bed/Baths, Features you want highlighted, etc...');
-        } else if (norm(svc) === 'mls input only') {
-          q060.setAttribute('placeholder','');
-        }
+    const q060 = document.getElementById('propertyNotes'); // Q060 input
+    const q060Label = document.querySelector('label[for="propertyNotes"]'); // Q060 label
+
+    if (q060) {
+      if (norm(svc) === 'listing preparation') {
+        q060.setAttribute('placeholder', 'e.g. # of Bed/Baths, Features you want highlighted, etc...');
+      } else if (norm(svc) === 'mls input only') {
+        q060.setAttribute('placeholder', '');
       }
-    }catch(e){}
+    }
+
+    if (q060Label) {
+      if (norm(svc) === 'offer writing') {
+        q060Label.textContent = 'Notes/Additional Information pertaining to this Offer:';
+      } else {
+        q060Label.textContent = 'Notes/Additional Information pertaining to this Listing:';
+      }
+    }
+
+  } catch (e) {
+    console.error('Error updating Q060:', e);
   }
+}
+
 
   // Hook into the existing visibility flow
   const originalApply = window.applyVisibility;
