@@ -907,7 +907,7 @@ if (json.success || json.ok) {
   status.style.display = 'none';
 
   // Friendly confirmation
-  showRequestModal('Request Submitted', 'Thank you for submitting an intake form! We have received your request!');
+  showRequestModal('Request Submitted', 'Thank you. We will reach out to you within 48 hours. We appreciate your business.');
 
   // Full reset
   form.reset();
@@ -947,7 +947,7 @@ if (json.success || json.ok) {
 <div aria-describedby="rtModalDesc" aria-labelledby="rtModalTitle" aria-modal="true" class="rt-modal-overlay" id="rtModalOverlay" role="dialog">
 <div class="rt-modal">
 <header id="rtModalTitle">Request Submitted</header>
-<div class="rt-body" id="rtModalDesc">Thank you. We will reach out to you within 48 hours. We appreciate your business.</div>
+<div class="rt-body" id="rtModalDesc">Thank you for submitting an intake form! We have received your request!</div>
 <footer>
 <button class="rt-btn" id="rtModalOk" type="button">OK</button>
 </footer>
@@ -1196,15 +1196,13 @@ document.addEventListener('DOMContentLoaded', toggleLeasebackDetails);
   }
 
   // 2. Dynamic Privacy Policy text and Q060 placeholder based on Q001
-function updatePolicyAndQ060() {
-  try {
+function updatePolicyAndQ060(){
+  try{
     const svc = getAns('serviceSelection'); // Q001
     const legend = document.querySelector('[data-qid="Q060"] legend');
-    const label = document.querySelector('[data-qid="Q060"] label[for="propertyNotes"]');
-    const textarea = document.getElementById('propertyNotes');
     const linkHtml = 'Our <a href="https://steeletransactions.com/wp-content/uploads/2023/05/Steele-Transactions-Privacy-Policy-1.pdf" target="_blank">Privacy Policy</a> can be accessed here.';
 
-    // Update legend text
+    // Update the legend text based on service
     if (legend) {
       if (norm(svc) === 'listing preparation') {
         legend.innerHTML = "By submitting this form, you confirm that you have authorization to share your client's contact information with Steele Transactions for the purpose of preparing a property listing.<br/>" + linkHtml;
@@ -1215,31 +1213,27 @@ function updatePolicyAndQ060() {
       }
     }
 
-    // Update label text
-    if (label) {
-      if (norm(svc) === 'offer writing') {
-        label.textContent = 'Notes/Additional Information pertaining to this Offer:';
-      } else {
-        label.textContent = 'Notes/Additional Information pertaining to this Listing:';
-      }
-    }
-
-    // Update placeholder
-    if (textarea) {
+    // Update the propertyNotes placeholder based on service
+    const q060 = document.getElementById('propertyNotes'); // Q060
+    if (q060) {
       if (norm(svc) === 'listing preparation') {
-        textarea.setAttribute('placeholder', 'e.g. # of Bed/Baths, Features you want highlighted, etc...');
+        q060.setAttribute('placeholder','e.g. # of Bed/Baths, Features you want highlighted, etc...');
       } else if (norm(svc) === 'mls input only') {
-        textarea.setAttribute('placeholder', '');
-      } else if (norm(svc) === 'offer writing') {
-        textarea.setAttribute('placeholder', 'e.g. Non-Realty Items Addendum, Inspector Information, etc...');
+        q060.setAttribute('placeholder','');
       }
+      // offer writing leaves original placeholder as is
     }
 
-  } catch (e) {
-    console.error('Error updating Q060:', e);
-  }
+    // NEW: Update the label for propertyNotes when service is listing preparation or MLS input only
+    const notesLabel = document.querySelector('label[for="propertyNotes"]');
+    if (notesLabel) {
+      if (norm(svc) === 'listing preparation' || norm(svc) === 'mls input only') {
+        notesLabel.textContent = 'Notes/Additional Information pertaining to this Listing:';
+      }
+      // any other service leaves the existing label unchanged
+    }
+  }catch(e){}
 }
-
 
 
   // Hook into the existing visibility flow
